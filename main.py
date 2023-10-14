@@ -1,1 +1,1 @@
-from game import TheQuest
+from TheQuest.game import TheQuest

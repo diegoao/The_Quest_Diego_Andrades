@@ -5,7 +5,7 @@ class TheQuest:
     def __init__(self):
         pygame.init()
         # Defino las dimensiones de la pantalla.
-        pygame.display.set_mode((900, 700))
+        self.pantalla = pygame.display.set_mode((900, 700))
 
     def jugar(self):
         # Creamos el bucle principal del juego
@@ -14,6 +14,10 @@ class TheQuest:
             for evento in pygame.event.get():  # Capturo el evento cerrar para cerrar el juego
                 if pygame.QUIT == evento.type:
                     salir = True
+
+            self.pantalla.fill((200, 0, 0))
+
+            pygame.display.flip()
 
         pygame.quit()  # Cerramos pygame
 
