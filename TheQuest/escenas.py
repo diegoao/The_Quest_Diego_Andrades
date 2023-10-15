@@ -1,7 +1,8 @@
 import os
 import pygame as pg
-from . import ALTO, ANCHO, FPS, RUTAENCABEZADOS
+from . import ALTO, ANCHO, COLORFUENTE, FPS, RUTAFUENTESENCABEZADOS
 from .entidades import (
+    Marcador,
     NaveEspacial
 )
 
@@ -23,7 +24,7 @@ class PantallaInicio(Escena):
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'ImagenPortada.png')
         self.fondo = pg.image.load(ruta)
-        self.tipo = pg.font.Font(RUTAENCABEZADOS, 30)
+        self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, 30)
         print("Has entrado en pantalla de incio del juego")
 
     def ejecutar_bucle(self):
@@ -56,6 +57,7 @@ class PantallaPartida(Escena):
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.image.load(ruta)
+        self.marcador = Marcador()
 
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
@@ -68,7 +70,11 @@ class PantallaPartida(Escena):
                     salir = True
             self.pantalla.blit(self.fondo, (0, 0))
             self.jugador.update()
+            self.marcador.pintar(self.pantalla)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
+            pg.draw.line(self.pantalla, COLORFUENTE, (0, 40), (ANCHO, 40), 5)
+            pg.draw.line(self.pantalla, COLORFUENTE,
+                         (0, ALTO-40), (ANCHO, ALTO-40), 5)
             pg.display.flip()  # Mostramos los cambios
 
 

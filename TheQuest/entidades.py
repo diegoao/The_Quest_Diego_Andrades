@@ -6,7 +6,7 @@ from random import randint
 import pygame as pg
 
 # mis importaciones
-from . import ALTO,  ANCHO
+from . import ALTO,  ANCHO, RUTAFUENTESENCABEZADOS
 
 
 class NaveEspacial(pg.sprite.Sprite):
@@ -51,5 +51,23 @@ class NaveEspacial(pg.sprite.Sprite):
                 self.rect.bottom = alturaNave
         if pulsadas[pg.K_DOWN]:
             self.rect.y += self.velomovimiento
-            if self.rect.top > ALTO-alturaNave:
-                self.rect.top = ALTO-alturaNave
+            if self.rect.top > ALTO-alturaNave-40:
+                self.rect.top = ALTO-alturaNave-40
+
+
+class Marcador:
+    def __init__(self):
+        self.valor = 0
+        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
+
+    def aumentar(self, incremento):
+        self.valor += incremento
+
+    def pintar(self, pantalla):
+
+        puntos = str(self.valor)
+        cadena = f'Puntos del jugador: {puntos}'
+        texto = self.tipo_letra.render(cadena, True, (255, 215, 0))
+        pos_x = 20
+        pos_y = 10
+        pantalla.blit(texto, (pos_x, pos_y))

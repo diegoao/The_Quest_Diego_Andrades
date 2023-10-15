@@ -4,5 +4,6 @@ ANCHO = 900
 ALTO = 700
 FPS = 25
 
-RUTAENCABEZADOS = os.path.join(
+RUTAFUENTESENCABEZADOS = os.path.join(
     'Recursos', 'Tipografía', 'SF Distant Galaxy.ttf')
+COLORFUENTE = (255, 215, 0)
