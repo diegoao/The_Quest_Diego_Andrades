@@ -19,7 +19,7 @@ class NaveEspacial(pg.sprite.Sprite):
     4. Volver a la posición inicial (método)
     5. Velocidad  --- DONE
     """
-    margen = 25
+    margen = 100
     velocidad = 20
 
     def __init__(self):
@@ -34,12 +34,23 @@ class NaveEspacial(pg.sprite.Sprite):
 
         self.contador = 0
         self.image = self.imagenes[self.contador]
-
-        self.rect = self.image.get_rect(midbottom=(ANCHO/2, ALTO-self.margen))
+        anchuraNave = self.image.get_width()
+        self.rect = self.image.get_rect(midbottom=(anchuraNave/2, ALTO/2))
 
     def update(self):
         # 00 -> 01 -> 00 -> 01
         self.contador += 1
+        alturaNave = self.image.get_height()
         if self.contador > 1:
             self.contador = 0
         self.image = self.imagenes[self.contador]
+
+        pulsadas = pg.key.get_pressed()
+        if pulsadas[pg.K_UP]:
+            self.rect.y -= self.velocidad
+            if self.rect.bottom < alturaNave:
+                self.rect.bottom = alturaNave
+        if pulsadas[pg.K_DOWN]:
+            self.rect.y += self.velocidad
+            if self.rect.top > ALTO-alturaNave:
+                self.rect.top = ALTO-alturaNave
