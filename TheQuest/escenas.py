@@ -1,18 +1,22 @@
 import os
 import pygame as pg
-from . import ALTO, ANCHO, RUTAENCABEZADOS
+from . import ALTO, ANCHO, FPS, RUTAENCABEZADOS
+from .entidades import (
+    NaveEspacial
+)
 
 
 class Escena:
     def __init__(self, pantalla):
         # Pasamos como atributo pantalla para mantener las caracteristicas en todas.
         self.pantalla = pantalla
+        self.reloj = pg.time.Clock()
 
     def ejecutar_bucle(self):
         pass
 
 
-class PantallaPrincipal(Escena):
+class PantallaInicio(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
         # Cargo la imagen de la pantalla principal
@@ -20,6 +24,7 @@ class PantallaPrincipal(Escena):
                             'Fondos', 'ImagenPortada.png')
         self.fondo = pg.image.load(ruta)
         self.tipo = pg.font.Font(RUTAENCABEZADOS, 30)
+        print("Has entrado en pantalla de incio del juego")
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
@@ -45,14 +50,25 @@ class PantallaPrincipal(Escena):
 
 
 class PantallaPartida(Escena):
+    def __init__(self, pantalla):
+        super().__init__(pantalla)
+        self.jugador = NaveEspacial()
+        print('Has entrado en pantalla Partida del juego')
+        ruta = os.path.join('Recursos', 'imágenes',
+                            'Fondos', 'FondoPartida.png')
+        self.fondo = pg.image.load(ruta)
+
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
         while not salir:
+            self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
-            self.pantalla.fill((0, 99, 0))
+            self.pantalla.blit(self.fondo, (0, 0))
+            self.jugador.update()
+            self.pantalla.blit(self.jugador.image, self.jugador.rect)
             pg.display.flip()  # Mostramos los cambios
 
 

@@ -1,6 +1,6 @@
 import pygame as pg
 from . import ALTO, ANCHO
-from TheQuest.escenas import PantallaPartida, PantallaPrincipal, PantallaRecords
+from TheQuest.escenas import PantallaInicio, PantallaPartida, PantallaRecords
 
 
 class TheQuest:
@@ -10,7 +10,7 @@ class TheQuest:
         self.pantalla = pg.display.set_mode((ANCHO, ALTO))
 
         self.escenas = [
-            PantallaPrincipal(self.pantalla),
+            PantallaInicio(self.pantalla),
             PantallaPartida(self.pantalla),
             PantallaRecords(self.pantalla)
         ]
