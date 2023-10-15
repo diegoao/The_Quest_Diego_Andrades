@@ -53,12 +53,12 @@ class PantallaPartida(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
         self.jugador = NaveEspacial()
-        print('Has entrado en pantalla Partida del juego')
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.image.load(ruta)
 
     def ejecutar_bucle(self):
+        print('Has entrado en pantalla Partida del juego')
         super().ejecutar_bucle()
         salir = False
         while not salir:

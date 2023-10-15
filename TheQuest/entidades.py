@@ -23,18 +23,18 @@ class NaveEspacial(pg.sprite.Sprite):
         for i in range(2):
             ruta_img = os.path.join(
                 'Recursos', 'imágenes', 'Componentes', f'halcon{i}.png')
-            print(f'halcon{i}')
             self.imagenes.append(pg.image.load(ruta_img))
 
         self.contador = 0
         self.image = self.imagenes[self.contador]
         anchuraNave = self.image.get_width()
         self.rect = self.image.get_rect(midbottom=(anchuraNave/2, ALTO/2))
-        self.velomovimiento = self.velocidad_min
+        self.velomovimiento = self.velocidadMin
 
     def update(self):
         # 00 -> 01 -> 00 -> 01
         alturaNave = self.image.get_height()
+        self.contador += 1
         if self.contador > 1:
             self.contador = 0
         self.image = self.imagenes[self.contador]
@@ -44,7 +44,6 @@ class NaveEspacial(pg.sprite.Sprite):
             self.velomovimiento += self.aumentoVelo
         elif (not pulsadas[pg.K_UP] and not pulsadas[pg.K_DOWN]) or (pulsadas[pg.K_UP] and pulsadas[pg.K_DOWN]):
             self.velomovimiento = self.velocidadMin
-        print(self.velomovimiento)
 
         if pulsadas[pg.K_UP]:
             self.rect.y -= self.velomovimiento
