@@ -6,7 +6,7 @@ from random import randint
 import pygame as pg
 
 # mis importaciones
-from . import ALTO,  ANCHO, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
+from . import ALTO,  ANCHO, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 
 
 class NaveEspacial(pg.sprite.Sprite):
@@ -77,10 +77,27 @@ class ContadorVidas:
 
     def __init__(self, vidas_iniciales):
         self.vidas = vidas_iniciales
+        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
 
     def perder_vida(self):
         self.vidas -= 1
         return self.vidas < 0
 
-    def pintar(self):
-        pass
+    def pintar(self, pantalla, vidas):
+        margen = 0
+        # Configuro texto vidas:
+        cadena = 'VIDAS: '
+        texto = self.tipo_letra.render(cadena, True, (255, 215, 0))
+        anchotext, altotext = texto.get_size()
+        pos_x = 20
+        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altotext)/2
+        pantalla.blit(texto, (pos_x, pos_y))
+        # Configuro imagenes visualizadoras de vida
+        ruta = os.path.join('Recursos', 'imágenes', 'Componentes', 'vidas.png')
+        self.logo = pg.image.load(ruta)
+        anchoimagen, altoimagen = self.logo.get_size()
+        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altoimagen)/2
+
+        for i in range(vidas):
+            pantalla.blit(self.logo, (pos_x + anchotext+margen, pos_y))
+            margen = margen + anchoimagen

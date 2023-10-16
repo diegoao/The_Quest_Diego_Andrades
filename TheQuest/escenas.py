@@ -1,7 +1,8 @@
 import os
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
+from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA, VIDASINICIALES
 from .entidades import (
+    ContadorVidas,
     Marcador,
     NaveEspacial
 )
@@ -59,6 +60,7 @@ class PantallaPartida(Escena):
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.image.load(ruta)
         self.marcador = Marcador()
+        self.contador_vidas = ContadorVidas(VIDASINICIALES)
 
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
@@ -74,6 +76,8 @@ class PantallaPartida(Escena):
             self.marcador.pintar(self.pantalla)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
             self.margenes()
+            vidas = self.contador_vidas.vidas
+            self.contador_vidas.pintar(self.pantalla, vidas)
             pg.display.flip()  # Mostramos los cambios
         return False
 
