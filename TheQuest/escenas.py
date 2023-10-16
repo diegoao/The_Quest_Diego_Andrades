@@ -33,12 +33,13 @@ class PantallaInicio(Escena):
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    salir = True
+                    return True
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
                     salir = True
             self.pantalla.blit(self.fondo, (0, 0))
             self.pintar_mensaje()
             pg.display.flip()  # Mostramos los cambios
+        return False
 
     def pintar_mensaje(self):
         mensaje = "Pulsa <ESPACIO> para empezar la partida"
@@ -67,7 +68,7 @@ class PantallaPartida(Escena):
             self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    salir = True
+                    return True
             self.pantalla.blit(self.fondo, (0, 0))
             self.jugador.update()
             self.marcador.pintar(self.pantalla)
@@ -76,6 +77,7 @@ class PantallaPartida(Escena):
             pg.draw.line(self.pantalla, COLORFUENTE,
                          (0, ALTO-40), (ANCHO, ALTO-40), 5)
             pg.display.flip()  # Mostramos los cambios
+        return False
 
 
 #####################################

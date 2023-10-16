@@ -17,7 +17,9 @@ class TheQuest:
 
     def jugar(self):
         for escena in self.escenas:
-            escena.ejecutar_bucle()
+            terminarJuego = escena.ejecutar_bucle()
+            if terminarJuego:
+                break
 
         pg.quit()  # Cerramos pygame
 
