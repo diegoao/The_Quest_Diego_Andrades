@@ -68,8 +68,9 @@ class Marcador:
         puntos = str(self.valor)
         cadena = f'Puntos del jugador: {puntos}'
         texto = self.tipo_letra.render(cadena, True, (255, 215, 0))
+        altotexto = texto.get_height()
         pos_x = 20
-        pos_y = 10
+        pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
         pantalla.blit(texto, (pos_x, pos_y))
 
 
