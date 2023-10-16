@@ -6,7 +6,7 @@ from random import randint
 import pygame as pg
 
 # mis importaciones
-from . import ALTO,  ANCHO, RUTAFUENTESENCABEZADOS
+from . import ALTO,  ANCHO, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 
 
 class NaveEspacial(pg.sprite.Sprite):
@@ -47,12 +47,12 @@ class NaveEspacial(pg.sprite.Sprite):
 
         if pulsadas[pg.K_UP]:
             self.rect.y -= self.velomovimiento
-            if self.rect.bottom < alturaNave:
-                self.rect.bottom = alturaNave
+            if self.rect.bottom < alturaNave + TAMAÑOMARGENESPARTIDA:
+                self.rect.bottom = alturaNave + TAMAÑOMARGENESPARTIDA
         if pulsadas[pg.K_DOWN]:
             self.rect.y += self.velomovimiento
-            if self.rect.top > ALTO-alturaNave-40:
-                self.rect.top = ALTO-alturaNave-40
+            if self.rect.top > ALTO-alturaNave-TAMAÑOMARGENESPARTIDA:
+                self.rect.top = ALTO-alturaNave-TAMAÑOMARGENESPARTIDA
 
 
 class Marcador:
@@ -71,3 +71,16 @@ class Marcador:
         pos_x = 20
         pos_y = 10
         pantalla.blit(texto, (pos_x, pos_y))
+
+
+class ContadorVidas:
+
+    def __init__(self, vidas_iniciales):
+        self.vidas = vidas_iniciales
+
+    def perder_vida(self):
+        self.vidas -= 1
+        return self.vidas < 0
+
+    def pintar(self):
+        pass

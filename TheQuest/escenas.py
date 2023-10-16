@@ -1,6 +1,6 @@
 import os
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, RUTAFUENTESENCABEZADOS
+from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 from .entidades import (
     Marcador,
     NaveEspacial
@@ -73,11 +73,15 @@ class PantallaPartida(Escena):
             self.jugador.update()
             self.marcador.pintar(self.pantalla)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
-            pg.draw.line(self.pantalla, COLORFUENTE, (0, 40), (ANCHO, 40), 5)
-            pg.draw.line(self.pantalla, COLORFUENTE,
-                         (0, ALTO-40), (ANCHO, ALTO-40), 5)
+            self.margenes()
             pg.display.flip()  # Mostramos los cambios
         return False
+
+    def margenes(self):
+        pg.draw.line(self.pantalla, COLORFUENTE, (0,
+                                                  TAMAÑOMARGENESPARTIDA), (ANCHO, TAMAÑOMARGENESPARTIDA), GROSORMARGENES)
+        pg.draw.line(self.pantalla, COLORFUENTE,
+                     (0, ALTO-TAMAÑOMARGENESPARTIDA), (ANCHO, ALTO-TAMAÑOMARGENESPARTIDA), GROSORMARGENES)
 
 
 #####################################
