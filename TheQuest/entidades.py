@@ -18,13 +18,11 @@ class NaveEspacial(pg.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-
         self.imagenes = []
         for i in range(2):
             ruta_img = os.path.join(
                 'Recursos', 'imágenes', 'Componentes', f'halcon{i}.png')
             self.imagenes.append(pg.image.load(ruta_img))
-
         self.contador = 0
         self.image = self.imagenes[self.contador]
         anchuraNave = self.image.get_width()
@@ -98,7 +96,32 @@ class ContadorVidas:
         self.logo = pg.image.load(ruta)
         anchoimagen, altoimagen = self.logo.get_size()
         pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altoimagen)/2
-
         for i in range(vidas):
             pantalla.blit(self.logo, (pos_x + anchotext+margen, pos_y))
             margen = margen + anchoimagen
+
+
+class Asteroide(pg.sprite.Sprite):
+    CAZA = 0
+    ASTEROIDE1 = 1
+    ASTEROIDE2 = 2
+
+    IMG_ASTEROIDES = ['caza.png', 'asteroide.png', 'asteroide1.png']
+
+    def __init__(self, puntos, modalidad=CAZA, velocidad=20):
+        super().__init__()
+        self.tipo = modalidad
+        self.imagenes = []
+        for img in self.IMG_ASTEROIDES:
+            ruta = os.path.join(
+                'Recursos', 'imágenes', 'Componentes', img)
+            self.imagenes.append(pg.image.load(ruta))
+        self.image = self.imagenes[modalidad]
+        self.rect = self.image.get_rect()
+        self.puntos = puntos
+        self.velocidad = velocidad
+
+    def update(self, asteroide):
+        asteroide.rect.x -= self.velocidad
+        if asteroide.rect.x < 0:
+            asteroide.remove()

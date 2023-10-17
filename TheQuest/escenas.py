@@ -1,7 +1,9 @@
 import os
+import random
 import pygame as pg
 from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA, VIDASINICIALES
 from .entidades import (
+    Asteroide,
     ContadorVidas,
     Marcador,
     NaveEspacial
@@ -61,10 +63,13 @@ class PantallaPartida(Escena):
         self.fondo = pg.image.load(ruta)
         self.marcador = Marcador()
         self.contador_vidas = ContadorVidas(VIDASINICIALES)
+        self.asteroides = pg.sprite.Group()
 
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
         super().ejecutar_bucle()
+        self.crear_asteroide()
+        grupo = pg.sprite.Group.sprites(self.asteroides)
         salir = False
         while not salir:
             self.reloj.tick(FPS)
@@ -77,7 +82,11 @@ class PantallaPartida(Escena):
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
             self.margenes()
             vidas = self.contador_vidas.vidas
+            self.asteroides.draw(self.pantalla)
             self.contador_vidas.pintar(self.pantalla, vidas)
+            self.asteroides.update(grupo[1])
+            print(pg.sprite.Group.sprites(self.asteroides))
+            # self.asteroides.update(self.asteroides)
             pg.display.flip()  # Mostramos los cambios
         return False
 
@@ -87,8 +96,30 @@ class PantallaPartida(Escena):
         pg.draw.line(self.pantalla, COLORFUENTE,
                      (0, ALTO-TAMAÑOMARGENESPARTIDA), (ANCHO, ALTO-TAMAÑOMARGENESPARTIDA), GROSORMARGENES)
 
+    def crear_asteroide(self):
+        numeroAsterorides = 2
+        tipo = None
+        velocidadmin = 1
+        velocidadmax = 10
+        tipoAsteroides = [Asteroide.CAZA,
+                          Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
+        puntos = [30, 22, 12]
+        contador = 1
+        while contador <= numeroAsterorides:
+            tipo = random.randint(0, 2)
+            velocidad = random.randint(velocidadmin, velocidadmax)
+            asteroide = Asteroide(
+                puntos[tipo], tipoAsteroides[tipo], velocidad)
+            asteroide.rect.x = ANCHO + asteroide.rect.height
+            asteroide.rect.y = random.randint(
+                TAMAÑOMARGENESPARTIDA, ALTO-TAMAÑOMARGENESPARTIDA-asteroide.rect.width)
+            self.asteroides.add(asteroide)
+            contador += 1
+
 
 #####################################
+
+
 class PantallaRecords(Escena):
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
