@@ -68,9 +68,10 @@ class PantallaPartida(Escena):
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
         super().ejecutar_bucle()
-        self.crear_asteroide()
-        grupo = pg.sprite.Group.sprites(self.asteroides)
+        creacion = 0
         salir = False
+        self.crear_asteroide()
+
         while not salir:
             self.reloj.tick(FPS)
             for evento in pg.event.get():
@@ -84,10 +85,19 @@ class PantallaPartida(Escena):
             vidas = self.contador_vidas.vidas
             self.asteroides.draw(self.pantalla)
             self.contador_vidas.pintar(self.pantalla, vidas)
-            self.asteroides.update(grupo[1])
-            print(pg.sprite.Group.sprites(self.asteroides))
-            # self.asteroides.update(self.asteroides)
+            self.segundos = round(pg.time.get_ticks() / 1000, 0)
+            if (creacion+3) == self.segundos:
+                creacion = self.segundos
+                self.crear_asteroide()
+            grupoAsteroides = pg.sprite.Group.sprites(self.asteroides)
+            for i in grupoAsteroides:
+                i.update()
+            # pg.sprite.Group.update(self.asteroides, grupoAsteroides)
+
+            # self.marcador.aumentar(puntos)
+
             pg.display.flip()  # Mostramos los cambios
+
         return False
 
     def margenes(self):
@@ -97,24 +107,20 @@ class PantallaPartida(Escena):
                      (0, ALTO-TAMAÑOMARGENESPARTIDA), (ANCHO, ALTO-TAMAÑOMARGENESPARTIDA), GROSORMARGENES)
 
     def crear_asteroide(self):
-        numeroAsterorides = 2
         tipo = None
         velocidadmin = 1
-        velocidadmax = 10
+        velocidadmax = 8
         tipoAsteroides = [Asteroide.CAZA,
                           Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
         puntos = [30, 22, 12]
-        contador = 1
-        while contador <= numeroAsterorides:
-            tipo = random.randint(0, 2)
-            velocidad = random.randint(velocidadmin, velocidadmax)
-            asteroide = Asteroide(
-                puntos[tipo], tipoAsteroides[tipo], velocidad)
-            asteroide.rect.x = ANCHO + asteroide.rect.height
-            asteroide.rect.y = random.randint(
-                TAMAÑOMARGENESPARTIDA, ALTO-TAMAÑOMARGENESPARTIDA-asteroide.rect.width)
-            self.asteroides.add(asteroide)
-            contador += 1
+        tipo = random.randint(0, 2)
+        velocidad = random.randint(velocidadmin, velocidadmax)
+        asteroide = Asteroide(
+            puntos[tipo], tipoAsteroides[tipo], velocidad)
+        asteroide.rect.x = ANCHO + asteroide.rect.height
+        asteroide.rect.y = random.randint(
+            TAMAÑOMARGENESPARTIDA, ALTO-TAMAÑOMARGENESPARTIDA-asteroide.rect.width)
+        self.asteroides.add(asteroide)
 
 
 #####################################

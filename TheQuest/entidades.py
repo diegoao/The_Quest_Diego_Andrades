@@ -59,6 +59,7 @@ class Marcador:
         self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
 
     def aumentar(self, incremento):
+
         self.valor += incremento
 
     def pintar(self, pantalla):
@@ -105,13 +106,13 @@ class Asteroide(pg.sprite.Sprite):
     CAZA = 0
     ASTEROIDE1 = 1
     ASTEROIDE2 = 2
-
     IMG_ASTEROIDES = ['caza.png', 'asteroide.png', 'asteroide1.png']
 
     def __init__(self, puntos, modalidad=CAZA, velocidad=20):
         super().__init__()
         self.tipo = modalidad
         self.imagenes = []
+        self.contador = 0
         for img in self.IMG_ASTEROIDES:
             ruta = os.path.join(
                 'Recursos', 'imágenes', 'Componentes', img)
@@ -121,7 +122,7 @@ class Asteroide(pg.sprite.Sprite):
         self.puntos = puntos
         self.velocidad = velocidad
 
-    def update(self, asteroide):
-        asteroide.rect.x -= self.velocidad
-        if asteroide.rect.x < 0:
-            asteroide.remove()
+    def update(self):
+        self.rect.x -= self.velocidad
+        if self.rect.x < 0:
+            self.kill()
