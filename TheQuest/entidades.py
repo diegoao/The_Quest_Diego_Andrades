@@ -125,4 +125,7 @@ class Asteroide(pg.sprite.Sprite):
     def update(self):
         self.rect.x -= self.velocidad
         if self.rect.x < 0:
+            print('eliminado por update')
             self.kill()
+            return True
+        return False

@@ -61,8 +61,8 @@ class PantallaPartida(Escena):
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.image.load(ruta)
-        self.marcador = Marcador()
         self.contador_vidas = ContadorVidas(VIDASINICIALES)
+        self.marcador = Marcador()
         self.asteroides = pg.sprite.Group()
 
     def ejecutar_bucle(self):
@@ -85,16 +85,27 @@ class PantallaPartida(Escena):
             vidas = self.contador_vidas.vidas
             self.asteroides.draw(self.pantalla)
             self.contador_vidas.pintar(self.pantalla, vidas)
-            self.segundos = round(pg.time.get_ticks() / 1000, 0)
-            if (creacion+3) == self.segundos:
-                creacion = self.segundos
+            self.timerSeg = round(pg.time.get_ticks() / 1000, 0)
+
+            # Creo y actualizo la posición del Asteroide
+            if (creacion+1) == self.timerSeg:
+                creacion = self.timerSeg
                 self.crear_asteroide()
             grupoAsteroides = pg.sprite.Group.sprites(self.asteroides)
-            for i in grupoAsteroides:
-                i.update()
-            # pg.sprite.Group.update(self.asteroides, grupoAsteroides)
+            for asteroide in grupoAsteroides:
+                if asteroide.update():
+                    self.marcador.aumentar(asteroide.puntos)
 
-            # self.marcador.aumentar(puntos)
+            # Detecto las colisiones y si surgen resto vidas hasta que me quedo sin ninguna y cierro el juego
+            colisiones = pg.sprite.spritecollide(
+                self.jugador, self.asteroides, False)
+            if len(colisiones) > 0:
+                for i in colisiones:
+                    i.kill()
+                if self.contador_vidas.vidas > 0:
+                    self.contador_vidas.perder_vida()
+            if self.contador_vidas.vidas <= 0:
+                salir = True
 
             pg.display.flip()  # Mostramos los cambios
 
@@ -108,8 +119,8 @@ class PantallaPartida(Escena):
 
     def crear_asteroide(self):
         tipo = None
-        velocidadmin = 1
-        velocidadmax = 8
+        velocidadmin = 12
+        velocidadmax = 20
         tipoAsteroides = [Asteroide.CAZA,
                           Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
         puntos = [30, 22, 12]
