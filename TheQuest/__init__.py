@@ -8,5 +8,9 @@ VIDASINICIALES = 3
 RUTAFUENTESENCABEZADOS = os.path.join(
     'Recursos', 'Tipografía', 'SF Distant Galaxy.ttf')
 COLORFUENTE = (255, 215, 0)
+COLORWARNING = (220, 30, 0)
 TAMAÑOMARGENESPARTIDA = 40
 GROSORMARGENES = 5
+
+# configuración niveles
+TIEMPONIVEL = [20, 90, 120]

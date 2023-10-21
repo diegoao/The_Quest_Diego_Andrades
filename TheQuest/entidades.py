@@ -6,7 +6,7 @@ from random import randint
 import pygame as pg
 
 # mis importaciones
-from . import ALTO,  ANCHO, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
+from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA, TIEMPONIVEL
 
 
 class NaveEspacial(pg.sprite.Sprite):
@@ -19,7 +19,7 @@ class NaveEspacial(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.imagenes = []
-        for i in range(2):
+        for i in range(5):
             ruta_img = os.path.join(
                 'Recursos', 'imágenes', 'Componentes', f'halcon{i}.png')
             self.imagenes.append(pg.image.load(ruta_img))
@@ -29,12 +29,17 @@ class NaveEspacial(pg.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(anchuraNave/2, ALTO/2))
         self.velomovimiento = self.velocidadMin
 
-    def update(self):
-        # 00 -> 01 -> 00 -> 01
+    def update(self, colision=None):
+        self.choque = colision
         alturaNave = self.image.get_height()
         self.contador += 1
-        if self.contador > 1:
-            self.contador = 0
+        if not self.choque:
+            if self.contador > 1:
+                self.contador = 0
+        else:
+            if self.contador > 4:
+                self.contador = 2
+
         self.image = self.imagenes[self.contador]
         pulsadas = pg.key.get_pressed()
 
@@ -129,3 +134,28 @@ class Asteroide(pg.sprite.Sprite):
             self.kill()
             return True
         return False
+
+
+class TemporizadorNivel:
+    def __init__(self, nivel):
+        self.valor = 1
+        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
+        self.inicialNivel = TIEMPONIVEL[nivel]
+
+    def decrementar(self, temporizador):
+        if self.valor > 0:
+            self.valor = self.inicialNivel
+            self.valor -= temporizador
+
+    def pintar(self, pantalla):
+
+        segundos = str(self.valor)
+        cadena = f'Tiempo del nivel: {segundos}'
+        if self.valor > 10:
+            texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
+        else:
+            texto = self.tipo_letra.render(cadena, True, COLORWARNING)
+        altotexto = texto.get_height()
+        pos_x = 500
+        pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
+        pantalla.blit(texto, (pos_x, pos_y))

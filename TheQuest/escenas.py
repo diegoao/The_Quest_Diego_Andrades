@@ -1,12 +1,14 @@
+import math
 import os
 import random
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA, VIDASINICIALES
+from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA, TIEMPONIVEL, VIDASINICIALES
 from .entidades import (
     Asteroide,
     ContadorVidas,
     Marcador,
-    NaveEspacial
+    NaveEspacial,
+    TemporizadorNivel
 )
 
 
@@ -57,6 +59,7 @@ class PantallaInicio(Escena):
 class PantallaPartida(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
+        self.nivel = 0
         self.jugador = NaveEspacial()
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
@@ -64,32 +67,43 @@ class PantallaPartida(Escena):
         self.contador_vidas = ContadorVidas(VIDASINICIALES)
         self.marcador = Marcador()
         self.asteroides = pg.sprite.Group()
+        self.temporizador = TemporizadorNivel(self.nivel)
 
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
         super().ejecutar_bucle()
-        creacion = 0
         salir = False
         self.crear_asteroide()
-
+        self.tiempodesdeinciojuego = round(pg.time.get_ticks() / 1000, 0)
+        creacion = TIEMPONIVEL[self.nivel]
+        sonido = 0
+        colision = False
         while not salir:
             self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     return True
+
+            if sonido == 0:
+                pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
+                pg.mixer.music.play()
+                sonido = 1
+            if self.temporizador.valor <= 0:
+                pg.mixer.music.stop()
+
             self.pantalla.blit(self.fondo, (0, 0))
-            self.jugador.update()
+            self.jugador.update(colision)
             self.marcador.pintar(self.pantalla)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
             self.margenes()
             vidas = self.contador_vidas.vidas
             self.asteroides.draw(self.pantalla)
             self.contador_vidas.pintar(self.pantalla, vidas)
-            self.timerSeg = round(pg.time.get_ticks() / 1000, 0)
+            self.Temporizador()
 
-            # Creo y actualizo la posición del Asteroide
-            if (creacion+1) == self.timerSeg:
-                creacion = self.timerSeg
+            # Creo,  actualizo la posición del Asteroide y cuento puntos
+            if (creacion-2) == self.temporizador.valor:
+                creacion = self.temporizador.valor
                 self.crear_asteroide()
             grupoAsteroides = pg.sprite.Group.sprites(self.asteroides)
             for asteroide in grupoAsteroides:
@@ -97,19 +111,33 @@ class PantallaPartida(Escena):
                     self.marcador.aumentar(asteroide.puntos)
 
             # Detecto las colisiones y si surgen resto vidas hasta que me quedo sin ninguna y cierro el juego
+
             colisiones = pg.sprite.spritecollide(
                 self.jugador, self.asteroides, False)
             if len(colisiones) > 0:
+                tiempo_colision = (self.temporizador.valor-1)
                 for i in colisiones:
                     i.kill()
-                if self.contador_vidas.vidas > 0:
+                if self.contador_vidas.vidas > 0 and not colision:
                     self.contador_vidas.perder_vida()
+                colision = True
+            print(colision)
+            # Pongo temporizador de 1 segundos para cuando me colisiona asteroide parar colision
+            if colision:
+                if tiempo_colision == self.temporizador.valor:
+                    colision = False
             if self.contador_vidas.vidas <= 0:
                 salir = True
 
             pg.display.flip()  # Mostramos los cambios
 
         return False
+
+    def Temporizador(self):
+        self.timerSeg = round(pg.time.get_ticks() / 1000, 0)
+        self.temporizador.decrementar(math.trunc(
+            self.timerSeg-self.tiempodesdeinciojuego))
+        self.temporizador.pintar(self.pantalla)
 
     def margenes(self):
         pg.draw.line(self.pantalla, COLORFUENTE, (0,

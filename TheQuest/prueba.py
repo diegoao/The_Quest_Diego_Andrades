@@ -1,18 +1,35 @@
 import pygame
-temporizador = 60
-visualizar = 0 + 3
+from pygame.locals import *
+import sys
 
+import os
+# Pantalla
+ANCHO, ALTO = 900, 700
+PANTALLA = pygame.display.set_mode((ANCHO, ALTO))
+FPS = 60
+RELOJ = pygame.time.Clock()
+
+# Fondo del juego
+fondo = pygame.image.load(
+    "Recursos/imágenes/Fondos/FondoPartida.png").convert()
+x = 0
+y = 0
+PANTALLA.blit(fondo, (x, y))
+
+# Bucle de juego.
 while True:
-    segundos = round(pygame.time.get_ticks() / 1000, 0)
-    temporizador = 60
-    temporizador -= segundos
-    reloj = pygame.time.Clock()
-
-    if (visualizar+3) == segundos:
-        # print(f'tiempo{segundos}')
-        visualizar = segundos
-
-    reloj.tick(2)
-   # print(temporizador)
-    lista = [4]
-    print(lista[-1])
+    # Cerrar Juego
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    # Movimiento del fondo
+    x_relativa = x % fondo.get_rect().width
+    PANTALLA.blit(fondo, (x + fondo.get_rect().width, y))
+    if x_relativa < ANCHO:
+        PANTALLA.blit(fondo, (x_relativa, y))
+    x += 1
+    # Control de FPS
+    RELOJ.tick(FPS)
+    # Actualización de la ventana
+    pygame.display.update()
