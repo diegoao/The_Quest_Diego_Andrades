@@ -28,13 +28,16 @@ class NaveEspacial(pg.sprite.Sprite):
         anchuraNave = self.image.get_width()
         self.rect = self.image.get_rect(midbottom=(anchuraNave/2, ALTO/2))
         self.velomovimiento = self.velocidadMin
+
         self.sonidoexplosion = pg.mixer.Sound(
             'Recursos/Sonidos/Niveles/Explosion.wav')
 
-    def update(self, colision=None):
+    def update(self, colision, partida):
+        self.partidainiciada = partida
         self.choque = colision
         alturaNave = self.image.get_height()
         self.contador += 1
+
         if not self.choque:
             if self.contador > 1:
                 self.contador = 0
@@ -43,22 +46,22 @@ class NaveEspacial(pg.sprite.Sprite):
             if self.contador > 4:
                 self.contador = 2
 
-        self.image = self.imagenes[self.contador]
         pulsadas = pg.key.get_pressed()
 
         if ((pulsadas[pg.K_UP] and not pulsadas[pg.K_DOWN]) or (pulsadas[pg.K_DOWN] and not pulsadas[pg.K_UP])) and self.velomovimiento < self.velocidadMax:
             self.velomovimiento += self.aumentoVelo
         elif (not pulsadas[pg.K_UP] and not pulsadas[pg.K_DOWN]) or (pulsadas[pg.K_UP] and pulsadas[pg.K_DOWN]):
             self.velomovimiento = self.velocidadMin
-
-        if pulsadas[pg.K_UP]:
-            self.rect.y -= self.velomovimiento
-            if self.rect.bottom < alturaNave + TAMAÑOMARGENESPARTIDA:
-                self.rect.bottom = alturaNave + TAMAÑOMARGENESPARTIDA
-        if pulsadas[pg.K_DOWN]:
-            self.rect.y += self.velomovimiento
-            if self.rect.top > ALTO-alturaNave-TAMAÑOMARGENESPARTIDA:
-                self.rect.top = ALTO-alturaNave-TAMAÑOMARGENESPARTIDA
+        if self.partidainiciada:
+            self.image = self.imagenes[self.contador]
+            if pulsadas[pg.K_UP]:
+                self.rect.y -= self.velomovimiento
+                if self.rect.bottom < alturaNave + TAMAÑOMARGENESPARTIDA:
+                    self.rect.bottom = alturaNave + TAMAÑOMARGENESPARTIDA
+            if pulsadas[pg.K_DOWN]:
+                self.rect.y += self.velomovimiento
+                if self.rect.top > ALTO-alturaNave-TAMAÑOMARGENESPARTIDA:
+                    self.rect.top = ALTO-alturaNave-TAMAÑOMARGENESPARTIDA
 
 
 class Marcador:
@@ -177,13 +180,11 @@ class Planeta:
         self.imagenes.append(pg.image.load(ruta))
         self.image = self.imagenes[self.tipo]
         self.rect = self.image.get_rect()
-        self.rect.x = ANCHO + (self.rect.height/2)
+        self.rect.x = ANCHO
         self.rect.y = (ALTO-self.rect.width)/2
         self.velocidad = self.movimiento
 
     def update(self):
-        print('actualizando posicion planeta')
-        print(f'posicionx planeta {self.rect.x}')
         if self.rect.x >= ANCHO * 0.65:
             self.rect.x -= self.velocidad
             return True

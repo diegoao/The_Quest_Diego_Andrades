@@ -81,6 +81,7 @@ class PantallaPartida(Escena):
         sonido = 0
         colision = False
         self.planeta.crearplaneta()
+        self.partida = True
         while not salir:
             self.reloj.tick(FPS)
             for evento in pg.event.get():
@@ -93,7 +94,7 @@ class PantallaPartida(Escena):
                 sonido = 1
 
             self.pantalla.blit(self.fondo, (0, 0))
-            self.jugador.update(colision)
+            self.jugador.update(colision, self.partida)
             self.marcador.pintar(self.pantalla)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
             self.margenes()
@@ -133,6 +134,7 @@ class PantallaPartida(Escena):
                 salir = True
 
             if self.temporizador.valor <= 0:
+                self.partida = False
                 self.planeta.update()
 
             pg.display.flip()  # Mostramos los cambios
