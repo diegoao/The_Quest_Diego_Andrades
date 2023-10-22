@@ -3,7 +3,7 @@ import os
 ANCHO = 900
 ALTO = 700
 FPS = 25
-VIDASINICIALES = 3
+VIDASINICIALES = 6
 
 RUTAFUENTESENCABEZADOS = os.path.join(
     'Recursos', 'Tipografía', 'SF Distant Galaxy.ttf')
@@ -13,4 +13,4 @@ TAMAÑOMARGENESPARTIDA = 40
 GROSORMARGENES = 5
 
 # configuración niveles
-TIEMPONIVEL = [20, 90, 120]
+TIEMPONIVEL = [5, 90, 120]

@@ -8,6 +8,7 @@ from .entidades import (
     ContadorVidas,
     Marcador,
     NaveEspacial,
+    Planeta,
     TemporizadorNivel
 )
 
@@ -68,6 +69,7 @@ class PantallaPartida(Escena):
         self.marcador = Marcador()
         self.asteroides = pg.sprite.Group()
         self.temporizador = TemporizadorNivel(self.nivel)
+        self.planeta = Planeta()
 
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
@@ -78,6 +80,7 @@ class PantallaPartida(Escena):
         creacion = TIEMPONIVEL[self.nivel]
         sonido = 0
         colision = False
+        self.planeta.crearplaneta()
         while not salir:
             self.reloj.tick(FPS)
             for evento in pg.event.get():
@@ -88,8 +91,6 @@ class PantallaPartida(Escena):
                 pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
                 pg.mixer.music.play()
                 sonido = 1
-            if self.temporizador.valor <= 0:
-                pg.mixer.music.stop()
 
             self.pantalla.blit(self.fondo, (0, 0))
             self.jugador.update(colision)
@@ -100,9 +101,10 @@ class PantallaPartida(Escena):
             self.asteroides.draw(self.pantalla)
             self.contador_vidas.pintar(self.pantalla, vidas)
             self.Temporizador()
+            self.pantalla.blit(self.planeta.image, self.planeta.rect)
 
             # Creo,  actualizo la posición del Asteroide y cuento puntos
-            if (creacion-2) == self.temporizador.valor:
+            if (creacion-1) == self.temporizador.valor:
                 creacion = self.temporizador.valor
                 self.crear_asteroide()
             grupoAsteroides = pg.sprite.Group.sprites(self.asteroides)
@@ -111,23 +113,27 @@ class PantallaPartida(Escena):
                     self.marcador.aumentar(asteroide.puntos)
 
             # Detecto las colisiones y si surgen resto vidas hasta que me quedo sin ninguna y cierro el juego
-
-            colisiones = pg.sprite.spritecollide(
-                self.jugador, self.asteroides, False)
+            if not colision and self.temporizador.valor > 0:
+                colisiones = pg.sprite.spritecollide(
+                    self.jugador, self.asteroides, False)
             if len(colisiones) > 0:
-                tiempo_colision = (self.temporizador.valor-1)
                 for i in colisiones:
                     i.kill()
+                colisiones = []
                 if self.contador_vidas.vidas > 0 and not colision:
                     self.contador_vidas.perder_vida()
+                tiempo_colision = (self.temporizador.valor-1)
                 colision = True
-            print(colision)
+
             # Pongo temporizador de 1 segundos para cuando me colisiona asteroide parar colision
             if colision:
                 if tiempo_colision == self.temporizador.valor:
                     colision = False
             if self.contador_vidas.vidas <= 0:
                 salir = True
+
+            if self.temporizador.valor <= 0:
+                self.planeta.update()
 
             pg.display.flip()  # Mostramos los cambios
 

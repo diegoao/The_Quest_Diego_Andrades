@@ -28,6 +28,8 @@ class NaveEspacial(pg.sprite.Sprite):
         anchuraNave = self.image.get_width()
         self.rect = self.image.get_rect(midbottom=(anchuraNave/2, ALTO/2))
         self.velomovimiento = self.velocidadMin
+        self.sonidoexplosion = pg.mixer.Sound(
+            'Recursos/Sonidos/Niveles/Explosion.wav')
 
     def update(self, colision=None):
         self.choque = colision
@@ -37,6 +39,7 @@ class NaveEspacial(pg.sprite.Sprite):
             if self.contador > 1:
                 self.contador = 0
         else:
+            self.sonidoexplosion.play()
             if self.contador > 4:
                 self.contador = 2
 
@@ -159,3 +162,29 @@ class TemporizadorNivel:
         pos_x = 500
         pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
         pantalla.blit(texto, (pos_x, pos_y))
+
+
+class Planeta:
+
+    IMG_PLANETAS = ['Planeta0.png', 'Planeta1.png', 'Planeta2.png']
+    movimiento = 2
+
+    def crearplaneta(self, modalidad=0):
+        self.tipo = modalidad
+        self.imagenes = []
+        ruta = os.path.join(
+            'Recursos', 'imágenes', 'Planetas', self.IMG_PLANETAS[self.tipo])
+        self.imagenes.append(pg.image.load(ruta))
+        self.image = self.imagenes[self.tipo]
+        self.rect = self.image.get_rect()
+        self.rect.x = ANCHO + (self.rect.height/2)
+        self.rect.y = (ALTO-self.rect.width)/2
+        self.velocidad = self.movimiento
+
+    def update(self):
+        print('actualizando posicion planeta')
+        print(f'posicionx planeta {self.rect.x}')
+        if self.rect.x >= ANCHO * 0.65:
+            self.rect.x -= self.velocidad
+            return True
+        return False
