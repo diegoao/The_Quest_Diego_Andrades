@@ -206,3 +206,22 @@ class Planeta:
             self.rect.x -= self.velocidad
             return True
         return False
+
+
+class Mensajes:
+    def __init__(self):
+        self.alto = 0
+        self.ancho = 0
+
+    def pintar(self, pantalla, mensaje, tamaño=45):
+        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, tamaño)
+        cadena = mensaje
+        offset = 0
+        for i in cadena:
+            texto = self.tipo_letra.render(i, True, COLORFUENTE)
+            self.alto = texto.get_height()
+            self.ancho = texto.get_width()
+            pos_x = (ANCHO-self.ancho)/2
+            pos_y = (ALTO-self.alto)/2
+            pantalla.blit(texto, (pos_x, pos_y + offset))
+            offset = self.alto

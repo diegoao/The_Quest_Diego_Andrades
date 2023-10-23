@@ -7,6 +7,7 @@ from .entidades import (
     Asteroide,
     ContadorVidas,
     Marcador,
+    Mensajes,
     NaveEspacial,
     Planeta,
     TemporizadorNivel
@@ -71,6 +72,7 @@ class PantallaPartida(Escena):
         self.temporizador = TemporizadorNivel(self.nivel)
         self.planeta = Planeta()
         self.colision = False
+        self.textfinalnivel = Mensajes()
 
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
@@ -123,7 +125,7 @@ class PantallaPartida(Escena):
                 if self.tiempo_colision == self.temporizador.valor:
                     self.colision = False
             if self.contador_vidas.vidas <= 0:
-                salir = True
+                return True
 
             self.finalizarNivel()
 
@@ -151,6 +153,9 @@ class PantallaPartida(Escena):
             self.aterrizar = True
         if self.jugador.rect.colliderect(self.planeta.rect):
             self.aterrizar = False
+            mensaje = ['Has terminado el nivel 1',
+                       'Pulsa <<ESPACIO>> para continuar']
+            self.textfinalnivel.pintar(self.pantalla, mensaje)
 
     def Temporizador(self):
         self.timerSeg = round(pg.time.get_ticks() / 1000, 0)
