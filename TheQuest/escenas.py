@@ -79,7 +79,7 @@ class PantallaPartida(Escena):
         self.crear_asteroide()
         self.tiempodesdeinciojuego = round(pg.time.get_ticks() / 1000, 0)
         creacion = TIEMPONIVEL[self.nivel]
-        sonido = 0
+        sonido = False
         self.colision = False
         self.planeta.crearplaneta()
         self.partida = True
