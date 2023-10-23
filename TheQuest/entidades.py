@@ -15,6 +15,7 @@ class NaveEspacial(pg.sprite.Sprite):
     velocidadMin = 20
     velocidadMax = 60
     aumentoVelo = 2
+    angulogiro = 0
 
     def __init__(self):
         super().__init__()
@@ -25,19 +26,38 @@ class NaveEspacial(pg.sprite.Sprite):
             self.imagenes.append(pg.image.load(ruta_img))
         self.contador = 0
         self.image = self.imagenes[self.contador]
-        anchuraNave = self.image.get_width()
-        self.rect = self.image.get_rect(midbottom=(anchuraNave/2, ALTO/2))
+        self.anchuraNave = self.image.get_width()
+        self.rect = self.image.get_rect(midbottom=(self.anchuraNave/2, ALTO/2))
         self.velomovimiento = self.velocidadMin
-
+        self.angulogiro = 0
         self.sonidoexplosion = pg.mixer.Sound(
             'Recursos/Sonidos/Niveles/Explosion.wav')
 
-    def update(self, colision, partida):
+    def update(self, colision, partida, aterrizar=None):
         self.partidainiciada = partida
         self.choque = colision
         alturaNave = self.image.get_height()
         self.contador += 1
 
+        self.cambiarImagenesNave()
+        self.image = self.imagenes[self.contador]
+        pulsadas = pg.key.get_pressed()
+        self.gestionTeclas(alturaNave, pulsadas)
+        self.aterrizar(aterrizar)
+        self.image = pg.transform.rotate(self.image, self.angulogiro)
+
+    def aterrizar(self, aterrizar):
+        if aterrizar:
+            velocidad = 1
+            if self.angulogiro != 180:
+                self.angulogiro += velocidad*5
+            if self.rect.y > (ALTO-self.anchuraNave)/2:
+                self.rect.y -= velocidad
+            if self.rect.y < (ALTO-self.anchuraNave)/2:
+                self.rect.y += velocidad
+            self.rect.x += velocidad
+
+    def cambiarImagenesNave(self):
         if not self.choque:
             if self.contador > 1:
                 self.contador = 0
@@ -46,14 +66,12 @@ class NaveEspacial(pg.sprite.Sprite):
             if self.contador > 4:
                 self.contador = 2
 
-        pulsadas = pg.key.get_pressed()
-
+    def gestionTeclas(self, alturaNave, pulsadas):
         if ((pulsadas[pg.K_UP] and not pulsadas[pg.K_DOWN]) or (pulsadas[pg.K_DOWN] and not pulsadas[pg.K_UP])) and self.velomovimiento < self.velocidadMax:
             self.velomovimiento += self.aumentoVelo
         elif (not pulsadas[pg.K_UP] and not pulsadas[pg.K_DOWN]) or (pulsadas[pg.K_UP] and pulsadas[pg.K_DOWN]):
             self.velomovimiento = self.velocidadMin
         if self.partidainiciada:
-            self.image = self.imagenes[self.contador]
             if pulsadas[pg.K_UP]:
                 self.rect.y -= self.velomovimiento
                 if self.rect.bottom < alturaNave + TAMAÑOMARGENESPARTIDA:
@@ -136,7 +154,6 @@ class Asteroide(pg.sprite.Sprite):
     def update(self):
         self.rect.x -= self.velocidad
         if self.rect.x < 0:
-            print('eliminado por update')
             self.kill()
             return True
         return False
