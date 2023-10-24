@@ -60,15 +60,15 @@ class PantallaInicio(Escena):
 
 
 class PantallaPartida(Escena):
-    def __init__(self, pantalla, nivel):
+    def __init__(self, pantalla, nivel, vidas, puntos):
         self.nivel = nivel
         super().__init__(pantalla)
         self.jugador = NaveEspacial()
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.image.load(ruta)
-        self.contador_vidas = ContadorVidas(VIDASINICIALES)
-        self.marcador = Marcador()
+        self.contador_vidas = ContadorVidas(vidas)
+        self.marcador = Marcador(puntos)
         self.asteroides = pg.sprite.Group()
         self.temporizador = TemporizadorNivel(self.nivel)
         self.planeta = Planeta()
@@ -97,7 +97,6 @@ class PantallaPartida(Escena):
                     return True, False
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and self.esperacambionivel:
                     salir = True
-
             if sonido == 0:
                 pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
                 pg.mixer.music.play()
@@ -131,13 +130,12 @@ class PantallaPartida(Escena):
                 if self.tiempo_colision == self.temporizador.valor:
                     self.colision = False
             if self.contador_vidas.vidas <= 0:
-                return True, False
-
+                salir = True
             self.finalizarNivel()
 
             pg.display.flip()  # Mostramos los cambios
 
-        return False, True
+        return False, True, self.contador_vidas.vidas, self.marcador.valor
 
     def colisiones(self):
         memoriacolisiones = []

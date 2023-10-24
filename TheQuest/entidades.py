@@ -86,8 +86,8 @@ class NaveEspacial(pg.sprite.Sprite):
 
 
 class Marcador:
-    def __init__(self):
-        self.valor = 0
+    def __init__(self, puntos=0):
+        self.valor = puntos
         self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
 
     def aumentar(self, incremento):
