@@ -2,7 +2,7 @@ import math
 import os
 import random
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA, TIEMPONIVEL, VIDASINICIALES
+from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA, TIEMPONIVEL, VELOCIDADOBJETOS, VIDASINICIALES
 from .entidades import (
     Asteroide,
     ContadorVidas,
@@ -20,7 +20,7 @@ class Escena:
         self.pantalla = pantalla
         self.reloj = pg.time.Clock()
 
-    def ejecutar_bucle(self):
+    def ejecutar_bucle(self, nivel=0):
         pass
 
 
@@ -33,6 +33,7 @@ class PantallaInicio(Escena):
         self.fondo = pg.image.load(ruta)
         self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, 30)
         print("Has entrado en pantalla de incio del juego")
+        self.inciarpartida = False
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
@@ -40,13 +41,13 @@ class PantallaInicio(Escena):
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    return True
+                    return True, False
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
                     salir = True
             self.pantalla.blit(self.fondo, (0, 0))
             self.pintar_mensaje()
             pg.display.flip()  # Mostramos los cambios
-        return False
+        return False, True
 
     def pintar_mensaje(self):
         mensaje = "Pulsa <ESPACIO> para empezar la partida"
@@ -59,9 +60,9 @@ class PantallaInicio(Escena):
 
 
 class PantallaPartida(Escena):
-    def __init__(self, pantalla):
+    def __init__(self, pantalla, nivel):
+        self.nivel = nivel
         super().__init__(pantalla)
-        self.nivel = 0
         self.jugador = NaveEspacial()
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
@@ -73,6 +74,7 @@ class PantallaPartida(Escena):
         self.planeta = Planeta()
         self.colision = False
         self.textfinalnivel = Mensajes()
+        self.esperacambionivel = False
 
     def ejecutar_bucle(self):
         print('Has entrado en pantalla Partida del juego')
@@ -86,11 +88,15 @@ class PantallaPartida(Escena):
         self.planeta.crearplaneta()
         self.partida = True
         self.aterrizar = False
+        print(f'has comenzado en el nivel: {self.nivel}')
+
         while not salir:
             self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    return True
+                    return True, False
+                if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and self.esperacambionivel:
+                    salir = True
 
             if sonido == 0:
                 pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
@@ -125,13 +131,13 @@ class PantallaPartida(Escena):
                 if self.tiempo_colision == self.temporizador.valor:
                     self.colision = False
             if self.contador_vidas.vidas <= 0:
-                return True
+                return True, False
 
             self.finalizarNivel()
 
             pg.display.flip()  # Mostramos los cambios
 
-        return False
+        return False, True
 
     def colisiones(self):
         memoriacolisiones = []
@@ -153,9 +159,10 @@ class PantallaPartida(Escena):
             self.aterrizar = True
         if self.jugador.rect.colliderect(self.planeta.rect):
             self.aterrizar = False
-            mensaje = ['Has terminado el nivel 1',
+            mensaje = [f'Has terminado el nivel {self.nivel+1}',
                        'Pulsa <<ESPACIO>> para continuar']
             self.textfinalnivel.pintar(self.pantalla, mensaje)
+            self.esperacambionivel = True
 
     def Temporizador(self):
         self.timerSeg = round(pg.time.get_ticks() / 1000, 0)
@@ -170,16 +177,14 @@ class PantallaPartida(Escena):
                      (0, ALTO-TAMAÑOMARGENESPARTIDA), (ANCHO, ALTO-TAMAÑOMARGENESPARTIDA), GROSORMARGENES)
 
     def crear_asteroide(self):
-        tipo = None
-        velocidadmin = 12
-        velocidadmax = 20
+        nivel = self.nivel
+        velocidadobjetos = VELOCIDADOBJETOS[nivel]
         tipoAsteroides = [Asteroide.CAZA,
                           Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
-        puntos = [30, 22, 12]
         tipo = random.randint(0, 2)
-        velocidad = random.randint(velocidadmin, velocidadmax)
+        velocidad = random.randint(velocidadobjetos[0], velocidadobjetos[1])
         asteroide = Asteroide(
-            puntos[tipo], tipoAsteroides[tipo], velocidad)
+            PUNTOSNAVE[tipo], tipoAsteroides[tipo], velocidad)
         asteroide.rect.x = ANCHO + asteroide.rect.height
         asteroide.rect.y = random.randint(
             TAMAÑOMARGENESPARTIDA, ALTO-TAMAÑOMARGENESPARTIDA-asteroide.rect.width)

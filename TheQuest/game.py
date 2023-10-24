@@ -8,18 +8,37 @@ class TheQuest:
         pg.init()
         # Defino las dimensiones de la pantalla.
         self.pantalla = pg.display.set_mode((ANCHO, ALTO))
-
-        self.escenas = [
-            PantallaInicio(self.pantalla),
-            PantallaPartida(self.pantalla),
-            PantallaRecords(self.pantalla)
-        ]
+        self.pantallainicial = True
+        self.nivel = 0
 
     def jugar(self):
-        for escena in self.escenas:
-            terminarJuego = escena.ejecutar_bucle()
-            if terminarJuego:
-                break
+        terminarJuego = False
+        while not terminarJuego:
+            if self.pantallainicial:
+                terminarJuego, empezarNivel0 = PantallaInicio(
+                    self.pantalla).ejecutar_bucle()
+                self.pantallainicial = False
+
+            if empezarNivel0:
+                print(f'estas en nivel:{self.nivel}')
+                terminarJuego, empezarNivel1 = PantallaPartida(
+                    self.pantalla, self.nivel).ejecutar_bucle()
+
+            if empezarNivel1:
+                self.nivel += 1
+                print(f'estas en nivel:{self.nivel}')
+                terminarJuego, empezarNivel2 = PantallaPartida(
+                    self.pantalla, self.nivel).ejecutar_bucle()
+            if empezarNivel2:
+                self.nivel += 1
+                print(f'estas en nivel:{self.nivel}')
+                terminarJuego, self.pantallainicial = PantallaPartida(
+                    self.pantalla, self.nivel).ejecutar_bucle()
+                print(f'valor pantalla inicial:{self.pantallainicial}')
+                print(f'valor pantalla terminarjuego:{terminarJuego}')
+
+        # if self.record:
+           # terminarJuego = PantallaRecords(self.pantalla).ejecutar_bucle()
 
         pg.quit()  # Cerramos pygame
 

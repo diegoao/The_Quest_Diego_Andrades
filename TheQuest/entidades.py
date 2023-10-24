@@ -81,6 +81,9 @@ class NaveEspacial(pg.sprite.Sprite):
                 if self.rect.top > ALTO-alturaNave-TAMAÑOMARGENESPARTIDA:
                     self.rect.top = ALTO-alturaNave-TAMAÑOMARGENESPARTIDA
 
+    def reset(self):
+        self.rect = self.image.get_rect(midbottom=(self.anchuraNave/2, ALTO/2))
+
 
 class Marcador:
     def __init__(self):
@@ -183,6 +186,9 @@ class TemporizadorNivel:
         pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
         pantalla.blit(texto, (pos_x, pos_y))
 
+    def reset(self, nivel):
+        self.inicialNivel = TIEMPONIVEL[nivel]
+
 
 class Planeta:
 
@@ -206,6 +212,9 @@ class Planeta:
             self.rect.x -= self.velocidad
             return True
         return False
+
+    def reset(self):
+        self.rect.x = ANCHO
 
 
 class Mensajes:
