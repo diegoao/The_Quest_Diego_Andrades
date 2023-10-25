@@ -20,7 +20,7 @@ class Escena:
         self.pantalla = pantalla
         self.reloj = pg.time.Clock()
 
-    def ejecutar_bucle(self, nivel=0):
+    def ejecutar_bucle(self):
         pass
 
 
@@ -94,13 +94,13 @@ class PantallaPartida(Escena):
             self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    return True, False
+                    return True, False, False, self.contador_vidas.vidas, self.marcador.valor
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and self.esperacambionivel:
                     salir = True
-            if sonido == 0:
-                pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
-                pg.mixer.music.play()
-                sonido = 1
+           # if sonido == False:
+               # pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
+               # pg.mixer.music.play()
+               # sonido = True
 
             self.pantalla.blit(self.fondo, (0, 0))
             self.jugador.update(self.colision, self.partida, self.aterrizar)
@@ -130,12 +130,13 @@ class PantallaPartida(Escena):
                 if self.tiempo_colision == self.temporizador.valor:
                     self.colision = False
             if self.contador_vidas.vidas <= 0:
-                salir = True
+                return False, False, True, self.contador_vidas.vidas, self.marcador.valor
+
             self.finalizarNivel()
 
             pg.display.flip()  # Mostramos los cambios
 
-        return False, True, self.contador_vidas.vidas, self.marcador.valor
+        return False, True, False, self.contador_vidas.vidas, self.marcador.valor
 
     def colisiones(self):
         memoriacolisiones = []
@@ -195,10 +196,14 @@ class PantallaPartida(Escena):
 class PantallaRecords(Escena):
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
+        self.jugador = NaveEspacial()
         salir = False
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
             self.pantalla.fill((0, 0, 255))
+            self.jugador.update(False, True, True)
+            self.pantalla.blit(self.jugador.image, self.jugador.rect)
             pg.display.flip()  # Mostramos los cambios
+        return True

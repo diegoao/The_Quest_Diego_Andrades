@@ -38,24 +38,26 @@ class NaveEspacial(pg.sprite.Sprite):
         self.choque = colision
         alturaNave = self.image.get_height()
         self.contador += 1
-
         self.cambiarImagenesNave()
         self.image = self.imagenes[self.contador]
         pulsadas = pg.key.get_pressed()
         self.gestionTeclas(alturaNave, pulsadas)
         self.aterrizar(aterrizar)
-        self.image = pg.transform.rotate(self.image, self.angulogiro)
 
     def aterrizar(self, aterrizar):
         if aterrizar:
             velocidad = 1
             if self.angulogiro != 180:
                 self.angulogiro += velocidad*5
-            if self.rect.y > (ALTO-self.anchuraNave)/2:
-                self.rect.y -= velocidad
-            if self.rect.y < (ALTO-self.anchuraNave)/2:
-                self.rect.y += velocidad
-            self.rect.x += velocidad
+                centro = self.rect.center
+                self.image = pg.transform.rotate(self.image, self.angulogiro)
+                self.image.get_rect(center=centro)
+            else:
+                if self.rect.y > (ALTO-self.anchuraNave)/2:
+                    self.rect.y -= velocidad
+                if self.rect.y < (ALTO-self.anchuraNave)/2:
+                    self.rect.y += velocidad
+                self.rect.x += velocidad
 
     def cambiarImagenesNave(self):
         if not self.choque:

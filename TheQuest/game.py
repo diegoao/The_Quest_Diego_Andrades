@@ -24,14 +24,14 @@ class TheQuest:
 
             if empezarnivel:
                 print(f'estas en nivel:{self.nivel}')
-                terminarJuego, empezarnivel, vidas, marcador = PantallaPartida(
+                terminarJuego, empezarnivel, gameover, vidas, marcador = PantallaPartida(
                     self.pantalla, self.nivel, self.vidas, self.marcador).ejecutar_bucle()
                 self.nivel += 1
                 self.vidas = vidas
                 self.marcador = marcador
 
-        # if self.record:
-           # terminarJuego = PantallaRecords(self.pantalla).ejecutar_bucle()
+            if gameover:
+                terminarJuego = PantallaRecords(self.pantalla).ejecutar_bucle()
 
         pg.quit()  # Cerramos pygame
 
