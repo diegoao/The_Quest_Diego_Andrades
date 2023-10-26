@@ -14,7 +14,7 @@ GROSORMARGENES = 5
 
 # configuración niveles
 
-TIEMPONIVEL = [50, 15, 20]
+TIEMPONIVEL = [3, 5, 6]
 VELOCIDADOBJETOS = [[5, 10], [10, 15], [12, 20]]
 
 # Puntos Naves

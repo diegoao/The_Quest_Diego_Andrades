@@ -14,7 +14,6 @@ class TheQuest:
         self.pantalla = pg.display.set_mode((ANCHO, ALTO))
         self.pantallainicial = True
         self.nivel = 0
-        self.vidas = VIDASINICIALES
         self.contadorvidas = ContadorVidas(VIDASINICIALES)
         self.marcador = Marcador()
         self.gameover = False

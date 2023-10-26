@@ -5,8 +5,6 @@ import pygame as pg
 from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA, TIEMPONIVEL, VELOCIDADOBJETOS, VIDASINICIALES
 from .entidades import (
     Asteroide,
-    ContadorVidas,
-    Marcador,
     Mensajes,
     NaveEspacial,
     Planeta,
