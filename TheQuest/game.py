@@ -1,6 +1,10 @@
 import pygame as pg
 from . import ALTO, ANCHO, VIDASINICIALES
 from TheQuest.escenas import PantallaInicio, PantallaPartida, PantallaRecords
+from .entidades import (
+    ContadorVidas,
+    Marcador,
+)
 
 
 class TheQuest:
@@ -11,7 +15,9 @@ class TheQuest:
         self.pantallainicial = True
         self.nivel = 0
         self.vidas = VIDASINICIALES
-        self.marcador = 0
+        self.contadorvidas = ContadorVidas(VIDASINICIALES)
+        self.marcador = Marcador()
+        self.gameover = False
 
     def jugar(self):
         terminarJuego = False
@@ -24,13 +30,17 @@ class TheQuest:
 
             if empezarnivel:
                 print(f'estas en nivel:{self.nivel}')
-                terminarJuego, empezarnivel, gameover, vidas, marcador = PantallaPartida(
-                    self.pantalla, self.nivel, self.vidas, self.marcador).ejecutar_bucle()
-                self.nivel += 1
-                self.vidas = vidas
-                self.marcador = marcador
+                terminarJuego = PantallaPartida(
+                    self.pantalla, self.nivel, self.contadorvidas, self.marcador).ejecutar_bucle()
+            self.nivel += 1
 
-            if gameover:
+            if self.contadorvidas.vidas <= 0:
+                empezarnivel = False
+                self.gameover = True
+            else:
+                empezarnivel = True
+
+            if self.gameover:
                 terminarJuego = PantallaRecords(self.pantalla).ejecutar_bucle()
 
         pg.quit()  # Cerramos pygame

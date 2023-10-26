@@ -60,15 +60,15 @@ class PantallaInicio(Escena):
 
 
 class PantallaPartida(Escena):
-    def __init__(self, pantalla, nivel, vidas, puntos):
+    def __init__(self, pantalla, nivel, contadorvidas, marcador):
         self.nivel = nivel
         super().__init__(pantalla)
         self.jugador = NaveEspacial()
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.image.load(ruta)
-        self.contador_vidas = ContadorVidas(vidas)
-        self.marcador = Marcador(puntos)
+        self.contador_vidas = contadorvidas
+        self.marcador = marcador
         self.asteroides = pg.sprite.Group()
         self.temporizador = TemporizadorNivel(self.nivel)
         self.planeta = Planeta()
@@ -94,7 +94,7 @@ class PantallaPartida(Escena):
             self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    return True, False, False, self.contador_vidas.vidas, self.marcador.valor
+                    return True
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and self.esperacambionivel:
                     salir = True
            # if sonido == False:
@@ -130,13 +130,12 @@ class PantallaPartida(Escena):
                 if self.tiempo_colision == self.temporizador.valor:
                     self.colision = False
             if self.contador_vidas.vidas <= 0:
-                return False, False, True, self.contador_vidas.vidas, self.marcador.valor
-
+                salir = True
             self.finalizarNivel()
 
             pg.display.flip()  # Mostramos los cambios
 
-        return False, True, False, self.contador_vidas.vidas, self.marcador.valor
+        return False
 
     def colisiones(self):
         memoriacolisiones = []
@@ -196,14 +195,11 @@ class PantallaPartida(Escena):
 class PantallaRecords(Escena):
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
-        self.jugador = NaveEspacial()
         salir = False
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
             self.pantalla.fill((0, 0, 255))
-            self.jugador.update(False, True, True)
-            self.pantalla.blit(self.jugador.image, self.jugador.rect)
             pg.display.flip()  # Mostramos los cambios
         return True
