@@ -1,10 +1,11 @@
 import pygame as pg
-from . import ALTO, ANCHO, VIDASINICIALES
+from . import ALTO, ANCHO, NUMERORECORS, RUTABASEDEDATOS, VIDASINICIALES
 from TheQuest.escenas import PantallaInicio, PantallaPartida, PantallaRecords
 from .entidades import (
     ContadorVidas,
     Marcador,
 )
+from .dbmanager import DBManager
 
 
 class TheQuest:
@@ -17,9 +18,13 @@ class TheQuest:
         self.contadorvidas = ContadorVidas(VIDASINICIALES)
         self.marcador = Marcador()
         self.gameover = False
+        self.datosrecords = []
+        self.basedatos = DBManager(RUTABASEDEDATOS)
 
     def jugar(self):
         terminarJuego = False
+        self.connectandcreatetable()
+
         while not terminarJuego:
 
             if self.pantallainicial:
@@ -42,7 +47,24 @@ class TheQuest:
             if self.gameover:
                 terminarJuego = PantallaRecords(self.pantalla).ejecutar_bucle()
 
-        pg.quit()  # Cerramos pygame
+        self.basedatos.desconectar()
+        pg.quit()
+
+    def connectandcreatetable(self):
+        self.basedatos.conectar()
+        sql = 'SELECT Fecha, Nombre, Puntuación, id FROM records'
+        try:
+            # Leo datos al inciar el juego para mostrar records
+            self.datosrecords = self.basedatos.consultaSQL(sql)
+        except:
+            # Si hay error es porque no existe la tabla y la creo con el numero de records en blanco
+            self.basedatos.creartabla()
+            sql = 'INSERT INTO records (Fecha,Nombre,Puntuación) VALUES (?, ?, ?)'
+            parametros = ('xx-xx-xxxx', 'Jugador', 0)
+            for i in range(NUMERORECORS):
+                self.basedatos.nuevo(sql, parametros)
+            self.datosrecords = self.basedatos.consultaSQL(
+                sql)  # Cerramos pygame
 
 
 if __name__ == '__main__':

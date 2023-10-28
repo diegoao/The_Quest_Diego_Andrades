@@ -19,3 +19,7 @@ VELOCIDADOBJETOS = [[5, 10], [10, 15], [12, 20]]
 
 # Puntos Naves
 PUNTOSNAVE = [9, 22, 16]
+
+# Ruta base de datos
+RUTABASEDEDATOS = os.path.join('TheQuest', 'Data', 'Records.db')
+NUMERORECORS = 5

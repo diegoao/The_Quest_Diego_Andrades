@@ -1,6 +1,17 @@
 import sqlite3
 from datetime import date
 
+"""
+CREATE TABLE "records" (
+	"Fecha"	TEXT NOT NULL,
+	"Nombre"	TEXT NOT NULL,
+	"Puntuación"	NUMERIC NOT NULL,
+	"id"	INTEGER NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+
+"""
+
 
 class DBManager:
     """
@@ -124,14 +135,32 @@ class DBManager:
 
     def nuevo(self, consulta, parametros):
         conexion, cursor = self.conectar()
-
         conexion = sqlite3.connect(self.ruta)
         cursor = conexion.cursor()
-
         resultado = False
         try:
-
             cursor.execute(consulta, parametros)
+            conexion.commit()
+            resultado = True
+        except:
+            conexion.rollback()
+            conexion.close()
+        return resultado
+
+    def creartabla(self):
+        consulta = """CREATE TABLE "records" (
+                "Fecha"	TEXT NOT NULL,
+                "Nombre"	TEXT NOT NULL,
+                "Puntuación"	NUMERIC NOT NULL,
+                "id"	INTEGER NOT NULL,
+                PRIMARY KEY("id" AUTOINCREMENT)
+                );"""
+        conexion, cursor = self.conectar()
+        cursor.execute(consulta)
+        conexion.commit()
+        resultado = False
+        try:
+            cursor.execute(consulta)
             conexion.commit()
             resultado = True
         except:
