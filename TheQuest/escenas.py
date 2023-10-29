@@ -66,7 +66,7 @@ class PantallaPartida(Escena):
         self.jugador = NaveEspacial()
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
-        self.fondo = pg.image.load(ruta)
+        self.fondo = pg.image.load(ruta).convert()
         self.contador_vidas = contadorvidas
         self.marcador = marcador
         self.asteroides = pg.sprite.Group()
@@ -90,6 +90,8 @@ class PantallaPartida(Escena):
         print(f'has comenzado en el nivel: {self.nivel}')
         pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
         pg.mixer.music.play()
+        self.xfondo = 0
+        self.yfondo = 0
 
         while not salir:
             self.reloj.tick(FPS)
@@ -99,7 +101,9 @@ class PantallaPartida(Escena):
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and self.esperacambionivel:
                     salir = True
 
-            self.pantalla.blit(self.fondo, (0, 0))
+            # Movimiento del fondo
+            self.moverfondo()
+            # self.pantalla.blit(self.fondo, (0, 0))
             self.jugador.update(self.colision, self.partida, self.aterrizar)
             self.marcador.pintar(self.pantalla)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
@@ -133,6 +137,14 @@ class PantallaPartida(Escena):
             pg.display.flip()  # Mostramos los cambios
 
         return False
+
+    def moverfondo(self):
+        x_calculada = self.xfondo % self.fondo.get_rect().width
+        self.pantalla.blit(
+            self.fondo, (x_calculada - self.fondo.get_rect().width, self.yfondo))
+        if x_calculada < ANCHO:
+            self.pantalla.blit(self.fondo, (x_calculada, 0))
+        self.xfondo -= 1
 
     def colisiones(self):
         memoriacolisiones = []

@@ -1,22 +1,8 @@
 import sqlite3
 from datetime import date
 
-"""
-CREATE TABLE "records" (
-	"Fecha"	TEXT NOT NULL,
-	"Nombre"	TEXT NOT NULL,
-	"Puntuación"	NUMERIC NOT NULL,
-	"id"	INTEGER NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
-
-"""
-
 
 class DBManager:
-    """
-    Clase para interactuar con la base de datos SQLite
-    """
 
     def __init__(self, ruta):
         self.ruta = ruta
