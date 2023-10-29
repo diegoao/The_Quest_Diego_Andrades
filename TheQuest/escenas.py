@@ -2,7 +2,7 @@ import math
 import os
 import random
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
+from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
 from .entidades import (
     Asteroide,
     Mensajes,
@@ -160,11 +160,14 @@ class PantallaPartida(Escena):
             self.colision = True
 
     def finalizarNivel(self):
-        if self.temporizador.valor <= 0:
+        if self.temporizador.valor <= 0 and not self.esperacambionivel:
             self.partida = False
             self.planeta.update()
             self.aterrizar = True
         if self.jugador.rect.colliderect(self.planeta.rect):
+            if self.aterrizar:
+                self.marcador.aumentar(random.randint(
+                    PUNTOSATERRIZAJE[0], PUNTOSATERRIZAJE[1]))
             self.aterrizar = False
             if self.nivel < NUMERONIVELES:
                 mensaje = [f'Has terminado el nivel {self.nivel}',
