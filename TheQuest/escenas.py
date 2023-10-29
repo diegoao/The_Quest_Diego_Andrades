@@ -88,7 +88,7 @@ class PantallaPartida(Escena):
         self.partida = True
         self.aterrizar = False
         print(f'has comenzado en el nivel: {self.nivel}')
-        pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
+        pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel.wav')
         pg.mixer.music.play()
         self.xfondo = 0
         self.yfondo = 0
@@ -112,6 +112,7 @@ class PantallaPartida(Escena):
             self.asteroides.draw(self.pantalla)
             self.contador_vidas.pintar(self.pantalla, vidas)
             self.Temporizador()
+            self.mostrarnivel()
             self.pantalla.blit(self.planeta.image, self.planeta.rect)
 
             # Creo,  actualizo la posición del Asteroide y cuento puntos
@@ -205,6 +206,16 @@ class PantallaPartida(Escena):
             TAMAÑOMARGENESPARTIDA, ALTO-TAMAÑOMARGENESPARTIDA-asteroide.rect.width)
         self.asteroides.add(asteroide)
 
+    def mostrarnivel(self):
+        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
+        nivel = str(self.nivel)
+        cadena = f'Jugando el nivel: {nivel}'
+        texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
+        altotexto = texto.get_height()
+        anchotexto = texto.get_width()
+        pos_x = (ANCHO-anchotexto)/2
+        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altotexto)/2
+        self.pantalla.blit(texto, (pos_x, pos_y))
 
 #####################################
 
