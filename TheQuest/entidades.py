@@ -6,7 +6,7 @@ from random import randint
 import pygame as pg
 
 # mis importaciones
-from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA, TIEMPONIVEL
+from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 
 
 class NaveEspacial(pg.sprite.Sprite):
@@ -171,10 +171,10 @@ class Asteroide(pg.sprite.Sprite):
 
 
 class TemporizadorNivel:
-    def __init__(self, nivel):
+    def __init__(self, tiempo):
         self.valor = 1
         self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
-        self.inicialNivel = TIEMPONIVEL[nivel]
+        self.inicialNivel = tiempo
 
     def decrementar(self, temporizador):
         if self.valor > 0:
@@ -193,9 +193,6 @@ class TemporizadorNivel:
         pos_x = 500
         pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
         pantalla.blit(texto, (pos_x, pos_y))
-
-    def reset(self, nivel):
-        self.inicialNivel = TIEMPONIVEL[nivel]
 
 
 class Planeta:

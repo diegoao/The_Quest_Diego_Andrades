@@ -2,7 +2,7 @@ import math
 import os
 import random
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA, TIEMPONIVEL, VELOCIDADOBJETOS, VIDASINICIALES
+from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
 from .entidades import (
     Asteroide,
     Mensajes,
@@ -58,9 +58,11 @@ class PantallaInicio(Escena):
 
 
 class PantallaPartida(Escena):
-    def __init__(self, pantalla, nivel, contadorvidas, marcador):
-        self.nivel = nivel
+    def __init__(self, pantalla, nivel, contadorvidas, marcador, tiemponivel, dificultad):
         super().__init__(pantalla)
+        self.nivel = nivel
+        self.tiemponivel = tiemponivel
+        self.dificultad = dificultad
         self.jugador = NaveEspacial()
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
@@ -68,7 +70,7 @@ class PantallaPartida(Escena):
         self.contador_vidas = contadorvidas
         self.marcador = marcador
         self.asteroides = pg.sprite.Group()
-        self.temporizador = TemporizadorNivel(self.nivel)
+        self.temporizador = TemporizadorNivel(self.tiemponivel)
         self.planeta = Planeta()
         self.colision = False
         self.textfinalnivel = Mensajes()
@@ -80,13 +82,14 @@ class PantallaPartida(Escena):
         salir = False
         self.crear_asteroide()
         self.tiempodesdeinciojuego = round(pg.time.get_ticks() / 1000, 0)
-        creacion = TIEMPONIVEL[self.nivel]
-        sonido = False
+        creacion = self.tiemponivel
         self.colision = False
         self.planeta.crearplaneta()
         self.partida = True
         self.aterrizar = False
         print(f'has comenzado en el nivel: {self.nivel}')
+        pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
+        pg.mixer.music.play()
 
         while not salir:
             self.reloj.tick(FPS)
@@ -95,10 +98,6 @@ class PantallaPartida(Escena):
                     return True
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and self.esperacambionivel:
                     salir = True
-           # if sonido == False:
-               # pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel1.wav')
-               # pg.mixer.music.play()
-               # sonido = True
 
             self.pantalla.blit(self.fondo, (0, 0))
             self.jugador.update(self.colision, self.partida, self.aterrizar)
@@ -155,8 +154,13 @@ class PantallaPartida(Escena):
             self.aterrizar = True
         if self.jugador.rect.colliderect(self.planeta.rect):
             self.aterrizar = False
-            mensaje = [f'Has terminado el nivel {self.nivel+1}',
-                       'Pulsa <<ESPACIO>> para continuar']
+            if self.nivel < NUMERONIVELES:
+                mensaje = [f'Has terminado el nivel {self.nivel}',
+                           'Pulsa <<ESPACIO>> para continuar']
+            else:
+                mensaje = [f'Felicitaciones has completado el juego',
+                           'Pulsa <<ESPACIO>> para continuar']
+
             self.textfinalnivel.pintar(self.pantalla, mensaje)
             self.esperacambionivel = True
 
@@ -173,8 +177,8 @@ class PantallaPartida(Escena):
                      (0, ALTO-TAMAÑOMARGENESPARTIDA), (ANCHO, ALTO-TAMAÑOMARGENESPARTIDA), GROSORMARGENES)
 
     def crear_asteroide(self):
-        nivel = self.nivel
-        velocidadobjetos = VELOCIDADOBJETOS[nivel]
+        velocidadobjetos = self.dificultad
+
         tipoAsteroides = [Asteroide.CAZA,
                           Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
         tipo = random.randint(0, 2)
@@ -191,9 +195,14 @@ class PantallaPartida(Escena):
 
 
 class PantallaRecords(Escena):
+    def __init__(self, pantalla, datos):
+        super().__init__(pantalla)
+
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
+        pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
+        pg.mixer.music.play()
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
