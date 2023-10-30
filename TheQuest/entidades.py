@@ -4,7 +4,6 @@ from random import randint
 
 # librerías de terceros
 import pygame as pg
-
 # mis importaciones
 from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 

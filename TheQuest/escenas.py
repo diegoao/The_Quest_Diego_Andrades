@@ -1,6 +1,7 @@
 import math
 import os
 import random
+import pandas as pd
 import pygame as pg
 from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
 from .entidades import (
@@ -223,16 +224,41 @@ class PantallaPartida(Escena):
 class PantallaRecords(Escena):
     def __init__(self, pantalla, datos):
         super().__init__(pantalla)
+        self.basedatos = datos
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
+        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 35)
         pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
-        pg.mixer.music.play()
+        # pg.mixer.music.play()
+        datos = ['Nombre', 'Puntuación', 'Nivel', 'Fecha']
+        cadena = ''
+        for i in datos:
+            cadena = cadena + (f'{i}   ')
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
-            self.pantalla.fill((0, 0, 255))
+            self.pantalla.fill((0, 0, 100))
+            sql = 'SELECT  Nombre, Puntuación, Nivel, Fecha, id FROM records'
+            records = self.basedatos.consultaSQL(sql)
+            pos_y = 25
+            for num in range(len(records)):
+                Nombre = records[num]["Nombre"]
+                Puntuacion = records[num]["Puntuación"]
+                Nivel = records[num]["Nivel"]
+                Fecha = records[num]["Fecha"]
+
+                cadena = "{:3} {:^5} {:>2} {:<10}".format(
+                    Nombre, Puntuacion, Nivel, Fecha)
+
+                texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
+                self.alto = texto.get_height()
+                self.ancho = texto.get_width()
+                pos_x = (ANCHO-self.ancho)/2
+                self.pantalla.blit(texto, (pos_x, pos_y))
+                pos_y += 50
+
             pg.display.flip()  # Mostramos los cambios
         return True

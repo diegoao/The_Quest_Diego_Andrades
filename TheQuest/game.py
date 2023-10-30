@@ -26,6 +26,9 @@ class TheQuest:
     def jugar(self):
         terminarJuego = False
         self.connectandcreatetable()
+        empezarnivel = False
+        self.gameover = True
+        self.pantallainicial = False
 
         while not terminarJuego:
 
@@ -64,15 +67,15 @@ class TheQuest:
     def connectandcreatetable(self):
         self.basedatos.conectar()
         puntosinciales = 0
-        sql = 'SELECT Fecha, Nombre, Puntuación, id FROM records'
+        sql = 'SELECT Nombre, Puntuación, Nivel, Fecha id FROM records'
         try:
             # Leo datos al inciar el juego para mostrar records
-            print(self.basedatos.consultaSQL(sql))
+            self.basedatos.consultaSQL(sql)
         except:
             # Si hay error es porque no existe la tabla y la creo con el numero de records en blanco
             self.basedatos.creartabla()
-            sql = 'INSERT INTO records (Fecha,Nombre,Puntuación) VALUES (?, ?, ?)'
-            parametros = ('xx-xx-xxxx', 'Jugador', puntosinciales)
+            sql = 'INSERT INTO records (Nombre,Puntuación, Nivel, Fecha) VALUES (?, ?, ?, ?)'
+            parametros = ('Jugador', puntosinciales, '0', 'xx-xx-xxxx')
             for i in range(NUMERORECORS):
                 self.basedatos.nuevo(sql, parametros)
 
