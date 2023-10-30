@@ -1,9 +1,9 @@
 import math
 import os
 import random
-import pandas as pd
+import datetime
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
+from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, NUMERORECORS, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
 from .entidades import (
     Asteroide,
     Mensajes,
@@ -59,8 +59,9 @@ class PantallaInicio(Escena):
 
 
 class PantallaPartida(Escena):
-    def __init__(self, pantalla, nivel, contadorvidas, marcador, tiemponivel, dificultad):
+    def __init__(self, pantalla, nivel, contadorvidas, marcador, tiemponivel, dificultad, db):
         super().__init__(pantalla)
+        self.basededatos = db
         self.nivel = nivel
         self.tiemponivel = tiemponivel
         self.dificultad = dificultad
@@ -222,43 +223,65 @@ class PantallaPartida(Escena):
 
 
 class PantallaRecords(Escena):
-    def __init__(self, pantalla, datos):
+    def __init__(self, pantalla, marcador, nivel, datos):
         super().__init__(pantalla)
+        self.nivel = nivel
         self.basedatos = datos
+        self.marcador = marcador
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
+        pedirinciales = False
         self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 35)
+        ruta = os.path.join('Recursos', 'imágenes',
+                            'Fondos', 'ImagenRecords.png')
+        self.fondo = pg.image.load(ruta)
         pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
         # pg.mixer.music.play()
-        datos = ['Nombre', 'Puntuación', 'Nivel', 'Fecha']
-        cadena = ''
-        for i in datos:
-            cadena = cadena + (f'{i}   ')
+        encabezado = ['Nombre', 'Puntuación', 'Nivel', 'Fecha']
+        # sql = 'SELECT  Nombre, Puntuación, Nivel, Fecha, id FROM records'
+        sql = f'SELECT Puntuación from records where Puntuación > {self.marcador.valor}'
+        records = self.basedatos.consultaSQL(sql)
+        fechaActual = datetime.datetime.now().date()
+        self.iniciales = ''
+        if len(records) < NUMERORECORS:
+            # pedirinciales = True
+            pass
+        pedirinciales = True  #  borrar
+
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     salir = True
-            self.pantalla.fill((0, 0, 100))
-            sql = 'SELECT  Nombre, Puntuación, Nivel, Fecha, id FROM records'
-            records = self.basedatos.consultaSQL(sql)
-            pos_y = 25
-            for num in range(len(records)):
-                Nombre = records[num]["Nombre"]
-                Puntuacion = records[num]["Puntuación"]
-                Nivel = records[num]["Nivel"]
-                Fecha = records[num]["Fecha"]
+                if evento.type == pg.KEYDOWN and not evento.key == pg.K_SPACE and pedirinciales:
+                    if evento.key == pg.K_BACKSPACE:
+                        self.iniciales = self.iniciales[:-1]
+                    else:
+                        self.iniciales += evento.unicode
 
-                cadena = "{:3} {:^5} {:>2} {:<10}".format(
-                    Nombre, Puntuacion, Nivel, Fecha)
+            self.pantalla.blit(self.fondo, (0, 0))
+            if pedirinciales:
+                self.pediriniciales()
 
-                texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
-                self.alto = texto.get_height()
-                self.ancho = texto.get_width()
-                pos_x = (ANCHO-self.ancho)/2
-                self.pantalla.blit(texto, (pos_x, pos_y))
-                pos_y += 50
+            sql = 'INSERT INTO records (Nombre,Puntuación, Nivel, Fecha) VALUES (?, ?, ?, ?)'
+            parametros = ('tony', self.marcador.valor,
+                          self.nivel, fechaActual)
+            self.basedatos.nuevo(sql, parametros)
+
+            sql = 'select Nombre,Puntuación, Nivel, Fecha from records order by Puntuación DESC LIMIT 5'
 
             pg.display.flip()  # Mostramos los cambios
         return True
+
+    def pediriniciales(self):
+        if len(self.iniciales) > 3:
+            self.iniciales = self.iniciales[:3]
+        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, 32)
+        input_rect = pg.Rect((ANCHO/2),
+                             (ALTO/2), 80, 50)
+        color = pg.Color('red')
+        pg.draw.rect(self.pantalla, color, input_rect, 2)
+        text_surface = fuente.render(
+            self.iniciales, True, COLORFUENTE)
+        self.pantalla.blit(text_surface, (input_rect))

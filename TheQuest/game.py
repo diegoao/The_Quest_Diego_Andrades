@@ -26,9 +26,9 @@ class TheQuest:
     def jugar(self):
         terminarJuego = False
         self.connectandcreatetable()
-        empezarnivel = False
-        self.gameover = True
-        self.pantallainicial = False
+        # empezarnivel = False
+        # self.gameover = True
+        # self.pantallainicial = False
 
         while not terminarJuego:
 
@@ -41,7 +41,7 @@ class TheQuest:
                 print(f'estas en nivel:{self.nivel}')
                 terminarJuego = PantallaPartida(
                     self.pantalla, self.nivel, self.contadorvidas,
-                    self.marcador, self.tiemponivel, self.dificultadobjetos).ejecutar_bucle()
+                    self.marcador, self.tiemponivel, self.dificultadobjetos, self.basedatos).ejecutar_bucle()
 
             if self.nivel <= NUMERONIVELES:
                 self.tiemponivel = self.tiemponivel * TIEMPOSIGUIENTENIVEL
@@ -59,14 +59,13 @@ class TheQuest:
 
             if self.gameover:
                 terminarJuego = PantallaRecords(
-                    self.pantalla, self.basedatos).ejecutar_bucle()
+                    self.pantalla, self.marcador, self.nivel, self.basedatos).ejecutar_bucle()
 
         # Cerramos pygame
         pg.quit()
 
     def connectandcreatetable(self):
         self.basedatos.conectar()
-        puntosinciales = 0
         sql = 'SELECT Nombre, Puntuación, Nivel, Fecha id FROM records'
         try:
             # Leo datos al inciar el juego para mostrar records
@@ -75,7 +74,7 @@ class TheQuest:
             # Si hay error es porque no existe la tabla y la creo con el numero de records en blanco
             self.basedatos.creartabla()
             sql = 'INSERT INTO records (Nombre,Puntuación, Nivel, Fecha) VALUES (?, ?, ?, ?)'
-            parametros = ('Jugador', puntosinciales, '0', 'xx-xx-xxxx')
+            parametros = ('Jugador', '0', '0', 'xx-xx-xxxx')
             for i in range(NUMERORECORS):
                 self.basedatos.nuevo(sql, parametros)
 

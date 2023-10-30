@@ -30,3 +30,23 @@ while True:
     screen.blit(text_surface, (input_rect))
     pygame.display.flip()
     clock.tick(25)
+
+
+# mostrar records
+    #  pos_y = ALTO/4
+
+    # for num in range(len(records)):
+    #   Nombre = records[num]["Nombre"]
+    #  Puntuacion = records[num]["Puntuación"]
+    #  Nivel = records[num]["Nivel"]
+    # Fecha = records[num]["Fecha"]
+
+    # cadena = "{:<5} {:>12} {:>12} {:>12}".format(
+    #   Nombre, Puntuacion, Nivel, Fecha)
+
+    # texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
+    # self.alto = texto.get_height()
+    # self.ancho = texto.get_width()
+    # pos_x = (ANCHO-self.ancho)/2
+    # self.pantalla.blit(texto, (pos_x, pos_y))
+    # pos_y += self.alto * 3
