@@ -91,7 +91,7 @@ class PantallaPartida(Escena):
         self.aterrizar = False
         print(f'has comenzado en el nivel: {self.nivel}')
         pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel.wav')
-        pg.mixer.music.play()
+        # pg.mixer.music.play()
         self.xfondo = 0
         self.yfondo = 0
 
@@ -239,20 +239,21 @@ class PantallaRecords(Escena):
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
         pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
-        pg.mixer.music.play()
-        encabezado = ['Nombre', 'Puntuación', 'Nivel', 'Fecha']
+        # pg.mixer.music.play()
+        self.encabezado = []
+        self.records = []
         # sql = 'SELECT  Nombre, Puntuación, Nivel, Fecha, id FROM records'
-        sql = f'SELECT Puntuación from records where Puntuación > {self.marcador.valor}'
+        sql = f'SELECT Puntos from records where Puntos > {self.marcador.valor}'
         records = self.basedatos.consultaSQL(sql)
         fechaActual = datetime.datetime.now().date()
         self.iniciales = ''
-        self.records = []
         mensaje = [f'Has conseguido un record, introducir 3 inciales',
                    'Pulsa <<ESPACIO>> para continuar']
         tamañofuente = 30
         if len(records) < NUMERORECORS:
             pedirinciales = True
-
+        else:
+            self.records, self.encabezado = self.pedirrecords()
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
@@ -263,17 +264,19 @@ class PantallaRecords(Escena):
                     else:
                         self.iniciales += evento.unicode
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and pedirinciales and len(self.iniciales) == 3:
-                    sql = 'INSERT INTO records (Nombre,Puntuación, Nivel, Fecha) VALUES (?, ?, ?, ?)'
+                    sql = 'INSERT INTO records (Nombre,Puntos, Nivel, Fecha) VALUES (?, ?, ?, ?)'
                     parametros = (self.iniciales, self.marcador.valor,
                                   self.nivel, fechaActual)
                     self.basedatos.nuevo(sql, parametros)
-                    self.records = self.pedirrecords()
+                    self.records, self.encabezado = self.pedirrecords()
                     pedirinciales = False
 
             self.pantalla.blit(self.fondo, (0, 0))
             if pedirinciales:
                 self.mensajes.pintar(self.pantalla, mensaje, tamañofuente)
                 self.pediriniciales()
+            else:
+                self.mostrarrecords()
 
             pg.display.flip()  # Mostramos los cambios
         return True
@@ -295,26 +298,30 @@ class PantallaRecords(Escena):
             text_surface, (input_rect.centerx-(text_surface.get_width()/2), input_rect.centery-(text_surface.get_height()/2)))
 
     def pedirrecords(self):
-        sql = 'select Nombre,Puntuación, Nivel, Fecha from records order by Puntuación DESC LIMIT 5'
+        sql = 'SELECT name FROM PRAGMA_TABLE_INFO("records")'
+        columnas = self.basedatos.consultaSQL(sql)
+        sql = 'select Nombre,Puntos, Nivel, Fecha from records order by Puntos DESC LIMIT 5'
         records = self.basedatos.consultaSQL(sql)
-        return records
+        return records, columnas
 
     def mostrarrecords(self):
-        #  pos_y = ALTO/4
-
-        # for num in range(len(records)):
-        #   Nombre = records[num]["Nombre"]
-        #  Puntuacion = records[num]["Puntuación"]
-        #  Nivel = records[num]["Nivel"]
-        # Fecha = records[num]["Fecha"]
-
-        # cadena = "{:<5} {:>12} {:>12} {:>12}".format(
-        #   Nombre, Puntuacion, Nivel, Fecha)
-
-        # texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
-        # self.alto = texto.get_height()
-        # self.ancho = texto.get_width()
-        # pos_x = (ANCHO-self.ancho)/2
-        # self.pantalla.blit(texto, (pos_x, pos_y))
-        # pos_y += self.alto * 3
-        pass
+        pos_y = 100
+        pos_x = ANCHO * 0.16
+        for columna in self.encabezado:
+            texto = self.tipo_letra.render(
+                str(columna['name']), True, COLORFUENTE)
+            self.pantalla.blit(texto, (pos_x, pos_y))
+            pos_x += 200
+        pos_y += 100
+        for num in range(len(self.records)):
+            pos_x = ANCHO * 0.16
+            Nombre = self.records[num]["Nombre"]
+            Puntuacion = self.records[num]["Puntos"]
+            Nivel = self.records[num]["Nivel"]
+            Fecha = self.records[num]["Fecha"]
+            datos = [Nombre, Puntuacion, Nivel, Fecha]
+            for data in datos:
+                texto = self.tipo_letra.render(str(data), True, COLORFUENTE)
+                self.pantalla.blit(texto, (pos_x, pos_y))
+                pos_x += 200
+            pos_y += 100

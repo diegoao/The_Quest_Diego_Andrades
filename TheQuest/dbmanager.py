@@ -136,11 +136,9 @@ class DBManager:
     def creartabla(self):
         consulta = """CREATE TABLE "records" (
                 "Nombre"	TEXT NOT NULL,
-                "Puntuación"	NUMERIC NOT NULL,
+                "Puntos"	NUMERIC NOT NULL,
                 "Nivel"	TEXT NOT NULL,
-                "Fecha"	TEXT NOT NULL,
-                "id"	INTEGER NOT NULL,
-                PRIMARY KEY("id" AUTOINCREMENT)
+                "Fecha"	TEXT NOT NULL
                 );"""
         conexion, cursor = self.conectar()
         cursor.execute(consulta)
