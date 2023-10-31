@@ -242,14 +242,15 @@ class PantallaRecords(Escena):
         # pg.mixer.music.play()
         self.encabezado = []
         self.records = []
-        # sql = 'SELECT  Nombre, Puntuación, Nivel, Fecha, id FROM records'
-        sql = f'SELECT Puntos from records where Puntos > {self.marcador.valor}'
-        records = self.basedatos.consultaSQL(sql)
+        self.connectandcreatetable()
         fechaActual = datetime.datetime.now().date()
         self.iniciales = ''
         mensaje = [f'Has conseguido un record, introducir 3 inciales',
                    'Pulsa <<ESPACIO>> para continuar']
         tamañofuente = 30
+        sql = f'SELECT Puntos from records where Puntos > {self.marcador.valor}'
+        records = self.basedatos.consultaSQL(sql)
+        # Si el número de records mayores que el marcador es menor que numero máximo de records lo guardamos
         if len(records) < NUMERORECORS:
             pedirinciales = True
         else:
@@ -331,3 +332,17 @@ class PantallaRecords(Escena):
                 self.pantalla.blit(texto, (pos_x, pos_y))
                 pos_x += 200
             pos_y += 100
+
+    def connectandcreatetable(self):
+        self.basedatos.conectar()
+        sql = 'SELECT Nombre, Puntos, Nivel, Fecha id FROM records'
+        try:
+            # Leo datos al inciar el juego para mostrar records
+            self.basedatos.consultaSQL(sql)
+        except:
+            # Si hay error es porque no existe la tabla y la creo con el numero de records en blanco
+            self.basedatos.creartabla()
+            sql = 'INSERT INTO records (Nombre,Puntos, Nivel, Fecha) VALUES (?, ?, ?, ?)'
+            parametros = ('---', '0', '0', 'xx-xx-xxxx')
+            for i in range(NUMERORECORS):
+                self.basedatos.nuevo(sql, parametros)

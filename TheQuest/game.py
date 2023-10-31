@@ -25,7 +25,6 @@ class TheQuest:
 
     def jugar(self):
         terminarJuego = False
-        self.connectandcreatetable()
 
         while not terminarJuego:
 
@@ -60,20 +59,6 @@ class TheQuest:
 
         # Cerramos pygame
         pg.quit()
-
-    def connectandcreatetable(self):
-        self.basedatos.conectar()
-        sql = 'SELECT Nombre, Puntos, Nivel, Fecha id FROM records'
-        try:
-            # Leo datos al inciar el juego para mostrar records
-            self.basedatos.consultaSQL(sql)
-        except:
-            # Si hay error es porque no existe la tabla y la creo con el numero de records en blanco
-            self.basedatos.creartabla()
-            sql = 'INSERT INTO records (Nombre,Puntos, Nivel, Fecha) VALUES (?, ?, ?, ?)'
-            parametros = ('---', '0', '0', 'xx-xx-xxxx')
-            for i in range(NUMERORECORS):
-                self.basedatos.nuevo(sql, parametros)
 
 
 if __name__ == '__main__':
