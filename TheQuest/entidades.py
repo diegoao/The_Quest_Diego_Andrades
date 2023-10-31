@@ -127,7 +127,7 @@ class ContadorVidas:
         margen = 0
         # Configuro texto vidas:
         cadena = 'VIDAS: '
-        texto = self.tipo_letra.render(cadena, True, (255, 215, 0))
+        texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
         anchotext, altotext = texto.get_size()
         pos_x = 20
         pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altotext)/2

@@ -232,23 +232,27 @@ class PantallaRecords(Escena):
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
+        self.mensajes = Mensajes()
         pedirinciales = False
         self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 35)
         ruta = os.path.join('Recursos', 'imágenes',
-                            'Fondos', 'ImagenRecords.png')
-        self.fondo = pg.image.load(ruta)
+                            'Fondos', 'FondoPartida.png')
+        self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
         pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
-        # pg.mixer.music.play()
+        pg.mixer.music.play()
         encabezado = ['Nombre', 'Puntuación', 'Nivel', 'Fecha']
         # sql = 'SELECT  Nombre, Puntuación, Nivel, Fecha, id FROM records'
         sql = f'SELECT Puntuación from records where Puntuación > {self.marcador.valor}'
         records = self.basedatos.consultaSQL(sql)
         fechaActual = datetime.datetime.now().date()
         self.iniciales = ''
+        mensaje = [f'Has conseguido un record, introducir inciales',
+                   'Pulsa <<ESPACIO>> para continuar']
         if len(records) < NUMERORECORS:
             # pedirinciales = True
             pass
         pedirinciales = True  #  borrar
+        tamañofuente = 30
 
         while not salir:
             for evento in pg.event.get():
@@ -262,6 +266,7 @@ class PantallaRecords(Escena):
 
             self.pantalla.blit(self.fondo, (0, 0))
             if pedirinciales:
+                self.mensajes.pintar(self.pantalla, mensaje, tamañofuente)
                 self.pediriniciales()
 
             sql = 'INSERT INTO records (Nombre,Puntuación, Nivel, Fecha) VALUES (?, ?, ?, ?)'
@@ -275,13 +280,17 @@ class PantallaRecords(Escena):
         return True
 
     def pediriniciales(self):
+
         if len(self.iniciales) > 3:
             self.iniciales = self.iniciales[:3]
-        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, 32)
-        input_rect = pg.Rect((ANCHO/2),
-                             (ALTO/2), 80, 50)
-        color = pg.Color('red')
-        pg.draw.rect(self.pantalla, color, input_rect, 2)
+        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, 45)
+        ancho_rectangulo = 120
+        alto_rectangulo = 50
+        input_rect = pg.Rect(((ANCHO-ancho_rectangulo)/2),
+                             ((ALTO-alto_rectangulo)/1.5), ancho_rectangulo, alto_rectangulo)
+        color = pg.Color('white')
+        pg.draw.rect(self.pantalla, COLORFUENTE, input_rect, 2)
         text_surface = fuente.render(
-            self.iniciales, True, COLORFUENTE)
-        self.pantalla.blit(text_surface, (input_rect))
+            self.iniciales, True, color)
+        self.pantalla.blit(
+            text_surface, (input_rect.centerx-(text_surface.get_width()/2), input_rect.centery-(text_surface.get_height()/2)))
