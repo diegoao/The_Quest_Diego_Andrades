@@ -246,13 +246,12 @@ class PantallaRecords(Escena):
         records = self.basedatos.consultaSQL(sql)
         fechaActual = datetime.datetime.now().date()
         self.iniciales = ''
-        mensaje = [f'Has conseguido un record, introducir inciales',
+        self.records = []
+        mensaje = [f'Has conseguido un record, introducir 3 inciales',
                    'Pulsa <<ESPACIO>> para continuar']
-        if len(records) < NUMERORECORS:
-            # pedirinciales = True
-            pass
-        pedirinciales = True  #  borrar
         tamañofuente = 30
+        if len(records) < NUMERORECORS:
+            pedirinciales = True
 
         while not salir:
             for evento in pg.event.get():
@@ -263,18 +262,18 @@ class PantallaRecords(Escena):
                         self.iniciales = self.iniciales[:-1]
                     else:
                         self.iniciales += evento.unicode
+                if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and pedirinciales and len(self.iniciales) == 3:
+                    sql = 'INSERT INTO records (Nombre,Puntuación, Nivel, Fecha) VALUES (?, ?, ?, ?)'
+                    parametros = (self.iniciales, self.marcador.valor,
+                                  self.nivel, fechaActual)
+                    self.basedatos.nuevo(sql, parametros)
+                    self.records = self.pedirrecords()
+                    pedirinciales = False
 
             self.pantalla.blit(self.fondo, (0, 0))
             if pedirinciales:
                 self.mensajes.pintar(self.pantalla, mensaje, tamañofuente)
                 self.pediriniciales()
-
-            sql = 'INSERT INTO records (Nombre,Puntuación, Nivel, Fecha) VALUES (?, ?, ?, ?)'
-            parametros = ('tony', self.marcador.valor,
-                          self.nivel, fechaActual)
-            self.basedatos.nuevo(sql, parametros)
-
-            sql = 'select Nombre,Puntuación, Nivel, Fecha from records order by Puntuación DESC LIMIT 5'
 
             pg.display.flip()  # Mostramos los cambios
         return True
@@ -294,3 +293,28 @@ class PantallaRecords(Escena):
             self.iniciales, True, color)
         self.pantalla.blit(
             text_surface, (input_rect.centerx-(text_surface.get_width()/2), input_rect.centery-(text_surface.get_height()/2)))
+
+    def pedirrecords(self):
+        sql = 'select Nombre,Puntuación, Nivel, Fecha from records order by Puntuación DESC LIMIT 5'
+        records = self.basedatos.consultaSQL(sql)
+        return records
+
+    def mostrarrecords(self):
+        #  pos_y = ALTO/4
+
+        # for num in range(len(records)):
+        #   Nombre = records[num]["Nombre"]
+        #  Puntuacion = records[num]["Puntuación"]
+        #  Nivel = records[num]["Nivel"]
+        # Fecha = records[num]["Fecha"]
+
+        # cadena = "{:<5} {:>12} {:>12} {:>12}".format(
+        #   Nombre, Puntuacion, Nivel, Fecha)
+
+        # texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
+        # self.alto = texto.get_height()
+        # self.ancho = texto.get_width()
+        # pos_x = (ANCHO-self.ancho)/2
+        # self.pantalla.blit(texto, (pos_x, pos_y))
+        # pos_y += self.alto * 3
+        pass
