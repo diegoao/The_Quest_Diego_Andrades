@@ -50,17 +50,15 @@ class DBManager:
         # 6. Devolver los resultados
         return self.registros
 
-    def borrar(self, id):
-        """
-        DELETE FROM movimientos WHERE id=?
-        """
-        sql = 'DELETE FROM movimientos WHERE id=?'
+    def borrar(self, puntos):
+
+        sql = 'delete from records where Puntos<?'
         conexion = sqlite3.connect(self.ruta)
         cursor = conexion.cursor()
 
         resultado = False
         try:
-            cursor.execute(sql, (id,))
+            cursor.execute(sql, (puntos,))
             conexion.commit()
             resultado = True
         except:
@@ -138,7 +136,9 @@ class DBManager:
                 "Nombre"	TEXT NOT NULL,
                 "Puntos"	NUMERIC NOT NULL,
                 "Nivel"	TEXT NOT NULL,
-                "Fecha"	TEXT NOT NULL
+                "Fecha"	TEXT NOT NULL,
+                "id"	INTEGER NOT NULL,
+	            PRIMARY KEY("id" AUTOINCREMENT)
                 );"""
         conexion, cursor = self.conectar()
         cursor.execute(consulta)

@@ -269,6 +269,7 @@ class PantallaRecords(Escena):
                                   self.nivel, fechaActual)
                     self.basedatos.nuevo(sql, parametros)
                     self.records, self.encabezado = self.pedirrecords()
+                    self.eliminarrecords()
                     pedirinciales = False
 
             self.pantalla.blit(self.fondo, (0, 0))
@@ -277,7 +278,6 @@ class PantallaRecords(Escena):
                 self.pediriniciales()
             else:
                 self.mostrarrecords()
-
             pg.display.flip()  # Mostramos los cambios
         return True
 
@@ -298,11 +298,17 @@ class PantallaRecords(Escena):
             text_surface, (input_rect.centerx-(text_surface.get_width()/2), input_rect.centery-(text_surface.get_height()/2)))
 
     def pedirrecords(self):
-        sql = 'SELECT name FROM PRAGMA_TABLE_INFO("records")'
+        # Pido los enunciado de las columnas y omito el id
+        sql = 'SELECT name FROM PRAGMA_TABLE_INFO("records") WHERE NOT name = "id" '
         columnas = self.basedatos.consultaSQL(sql)
+        # Pido los records ordenados en orden descendente
         sql = 'select Nombre,Puntos, Nivel, Fecha from records order by Puntos DESC LIMIT 5'
         records = self.basedatos.consultaSQL(sql)
         return records, columnas
+
+    def eliminarrecords(self):
+        puntos = self.records[-1]["Puntos"]
+        self.basedatos.borrar(puntos)
 
     def mostrarrecords(self):
         pos_y = 100
