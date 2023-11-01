@@ -3,7 +3,7 @@ import os
 import random
 import datetime
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, NUMERORECORS, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
+from . import ALTO, ANCHO, COLORFUENTE, COLORRECORDS, FPS, GROSORMARGENES, NUMERONIVELES, NUMERORECORS, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
 from .entidades import (
     Asteroide,
     Mensajes,
@@ -34,7 +34,6 @@ class PantallaInicio(Escena):
                             'Fondos', 'ImagenPortada.png')
         self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
         self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, 30)
-        print("Has entrado en pantalla de incio del juego")
         self.inciarpartida = False
 
     def ejecutar_bucle(self):
@@ -90,7 +89,6 @@ class PantallaPartida(Escena):
         self.esperacambionivel = False
 
     def ejecutar_bucle(self):
-        print('Has entrado en pantalla Partida del juego')
         super().ejecutar_bucle()
         salir = False
         self.crear_asteroide()
@@ -100,7 +98,6 @@ class PantallaPartida(Escena):
         self.planeta.crearplaneta()
         self.partida = True
         self.aterrizar = False
-        print(f'has comenzado en el nivel: {self.nivel}')
         pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel.wav')
         # pg.mixer.music.play()
         self.xfondo = 0
@@ -242,7 +239,6 @@ class PantallaRecords(Escena):
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
-        print('Has entrado en pantalla Records')
         salir = False
         self.mensajes = Mensajes()
         pedirinciales = False
@@ -250,6 +246,17 @@ class PantallaRecords(Escena):
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'FondoPartida.png')
         self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
+        ####################################
+        self.fondos = []
+        for i in range(3):
+            ruta_img = os.path.join(
+                'Recursos', 'imágenes', 'Fondos', f'hiperespacio{i}.png')
+            self.fondos.append(pg.transform.scale(
+                pg.image.load(ruta_img), (ANCHO, ALTO)))
+        self.cambioimagenes = 0
+        self.cambio1seg = 0
+        self.cambiosentidoimg = 0
+        ########################
         pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
         # pg.mixer.music.play()
         self.encabezado = []
@@ -268,9 +275,8 @@ class PantallaRecords(Escena):
             pedirinciales = True
         else:
             self.records, self.encabezado = self.pedirrecords()
-            self.timernextwindows = Timerchangewindows(5)
+            self.timernextwindows = Timerchangewindows(6)
         while not salir:
-
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     self.nextwindows = ''
@@ -290,11 +296,13 @@ class PantallaRecords(Escena):
                     self.timernextwindows = Timerchangewindows(5)
                     pedirinciales = False
 
-            self.pantalla.blit(self.fondo, (0, 0))
             if pedirinciales:
+                self.pantalla.blit(self.fondo, (0, 0))
                 self.mensajes.pintar(self.pantalla, mensaje, tamañofuente)
                 self.pediriniciales()
             else:
+                self.hiperespacio()
+                self.pantalla.blit(self.image, (0, 0))
                 self.mostrarrecords()
                 # Cambio a pantalla Inicial en 5 segundos
                 if self.timernextwindows.counter():
@@ -303,6 +311,19 @@ class PantallaRecords(Escena):
             pg.display.flip()  # Mostramos los cambios
 
         return False, self.nextwindows
+
+    def hiperespacio(self):
+        if self.cambioimagenes == 2:
+            self.cambiosentidoimg = True
+        if self.cambioimagenes == 0:
+            self.cambiosentidoimg = False
+        if self.timernextwindows.timer != self.cambio1seg:
+            self.cambio1seg = self.timernextwindows.timer
+            if self.cambiosentidoimg:
+                self.cambioimagenes -= 1
+            else:
+                self.cambioimagenes += 1
+        self.image = self.fondos[self.cambioimagenes]
 
     def pediriniciales(self):
 
@@ -338,7 +359,7 @@ class PantallaRecords(Escena):
         pos_x = ANCHO * 0.16
         for columna in self.encabezado:
             texto = self.tipo_letra.render(
-                str(columna['name']), True, COLORFUENTE)
+                str(columna['name']), True, COLORRECORDS)
             self.pantalla.blit(texto, (pos_x, pos_y))
             pos_x += 200
         pos_y += 100
@@ -350,7 +371,7 @@ class PantallaRecords(Escena):
             Fecha = self.records[num]["Fecha"]
             datos = [Nombre, Puntuacion, Nivel, Fecha]
             for data in datos:
-                texto = self.tipo_letra.render(str(data), True, COLORFUENTE)
+                texto = self.tipo_letra.render(str(data), True, COLORRECORDS)
                 self.pantalla.blit(texto, (pos_x, pos_y))
                 pos_x += 200
             pos_y += 60

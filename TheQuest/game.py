@@ -1,5 +1,5 @@
 import pygame as pg
-from . import ALTO, ANCHO, NUMERONIVELES, NUMERORECORS, RUTABASEDEDATOS, TIEMPO1ERNIVEL, TIEMPOSIGUIENTENIVEL, VELOCIDADINICIALOBJETOS, VIDASINICIALES
+from . import ALTO, ANCHO, NUMERONIVELES, RUTABASEDEDATOS, TIEMPO1ERNIVEL, TIEMPOSIGUIENTENIVEL, VELOCIDADINICIALOBJETOS, VIDASINICIALES
 from TheQuest.escenas import PantallaInicio, PantallaPartida, PantallaRecords
 from .entidades import (
     ContadorVidas,
@@ -23,8 +23,6 @@ class TheQuest:
         self.basedatos = DBManager(RUTABASEDEDATOS)
         self.tiemponivel = TIEMPO1ERNIVEL
         self.dificultadobjetos = VELOCIDADINICIALOBJETOS
-        self.niveles = ['PantallaInicio',
-                        'EmpezarPartida', 'Records']
         self.gotowindows = 'PantallaInicio'
 
     def jugar(self):

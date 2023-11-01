@@ -9,12 +9,13 @@ RUTAFUENTESENCABEZADOS = os.path.join(
     'Recursos', 'Tipografía', 'SF Distant Galaxy.ttf')
 COLORFUENTE = (255, 215, 0)
 COLORWARNING = (220, 30, 0)
+COLORRECORDS = (255, 99, 0)
 TAMAÑOMARGENESPARTIDA = 40
 GROSORMARGENES = 5
 
 # configuración niveles
 
-NUMERONIVELES = 2
+NUMERONIVELES = 1
 TIEMPO1ERNIVEL = 15
 TIEMPOSIGUIENTENIVEL = 1.5
 # Velocidad incial objetos
