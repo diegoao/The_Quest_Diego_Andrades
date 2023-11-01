@@ -33,12 +33,17 @@ class PantallaInicio(Escena):
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'ImagenPortada.png')
         self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
-        self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, 30)
         self.inciarpartida = False
+        pg.mixer.music.load('Recursos/Sonidos/Niveles/MusicaPortada.wav')
+        ancho_rectangulo = 500
+        alto_rectangulo = 50
+        self.rect_instrucciones = pg.Rect(((ANCHO-ancho_rectangulo)/2),
+                                          ((ALTO-(alto_rectangulo*1.5))), ancho_rectangulo, alto_rectangulo)
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
+        # pg.mixer.music.play(-1)
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
@@ -50,20 +55,49 @@ class PantallaInicio(Escena):
 
             self.pantalla.blit(self.fondo, (0, 0))
             self.pintar_mensaje()
+            self.titulo()
+            self.botonintrucciones()
             pg.display.flip()  # Mostramos los cambios
-            # Cambio a pantalla records en 5 segundos
-            if self.timernextwindows.counter():
-                self.nextwindows = 'Records'
-                salir = True
-
+            x_raton, y_raton = pg.mouse.get_pos()
+            if self.rect_instrucciones.collidepoint((x_raton, y_raton)):
+                print('raton en posicion')
+            else:
+                print('')
+                # Cambio a pantalla records en 5 segundos
+                if self.timernextwindows.counter():
+                    self.nextwindows = 'Records'
+                    salir = True
+        pg.mixer.music.stop()
         return False, self.nextwindows
 
     def pintar_mensaje(self):
+        tamañofuente = 30
+        self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
         mensaje = "Pulsa <ESPACIO> para empezar la partida"
-        texto = self.tipo.render(mensaje, True, (255, 215, 0))
+        texto = self.tipo.render(mensaje, True, COLORFUENTE)
         pos_x = (ANCHO-texto.get_width())/2
-        pos_y = ALTO * 3/4
+        pos_y = (ALTO * 3/4) + texto.get_height()
         self.pantalla.blit(texto, (pos_x, pos_y))
+
+    def titulo(self):
+        tamañofuente = 120
+        self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
+        mensaje = "THE QUEST"
+        texto = self.tipo.render(mensaje, True, COLORFUENTE)
+        pos_x = (ANCHO-texto.get_width())/2
+        pos_y = texto.get_height()/2
+        self.pantalla.blit(texto, (pos_x, pos_y))
+
+    def botonintrucciones(self):
+        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, 45)
+        mensaje = 'INSTRUCCIONES'
+        color = pg.Color('white')
+        pg.draw.rect(self.pantalla, pg.Color(
+            'red'), self.rect_instrucciones, 2)
+        text_surface = fuente.render(
+            mensaje, True, color)
+        self.pantalla.blit(
+            text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/2), self.rect_instrucciones.centery-(text_surface.get_height()/2)))
 
 #####################################
 
@@ -99,7 +133,7 @@ class PantallaPartida(Escena):
         self.partida = True
         self.aterrizar = False
         pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel.wav')
-        # pg.mixer.music.play()
+        pg.mixer.music.play(-1, 10)
         self.xfondo = 0
         self.yfondo = 0
 
@@ -145,7 +179,7 @@ class PantallaPartida(Escena):
             self.finalizarNivel()
 
             pg.display.flip()  # Mostramos los cambios
-
+        pg.mixer.music.stop()
         return False
 
     def moverfondo(self):
@@ -258,7 +292,7 @@ class PantallaRecords(Escena):
         self.cambiosentidoimg = 0
         ########################
         pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
-        # pg.mixer.music.play()
+        pg.mixer.music.play(-1)
         self.encabezado = []
         self.records = []
         self.connectandcreatetable()
@@ -309,7 +343,7 @@ class PantallaRecords(Escena):
                     self.nextwindows = 'PantallaInicio'
                     salir = True
             pg.display.flip()  # Mostramos los cambios
-
+        pg.mixer.music.stop()
         return False, self.nextwindows
 
     def hiperespacio(self):
@@ -359,7 +393,7 @@ class PantallaRecords(Escena):
         pos_x = ANCHO * 0.16
         for columna in self.encabezado:
             texto = self.tipo_letra.render(
-                str(columna['name']), True, COLORRECORDS)
+                str(columna['name']), True, COLORFUENTE)
             self.pantalla.blit(texto, (pos_x, pos_y))
             pos_x += 200
         pos_y += 100
@@ -371,7 +405,7 @@ class PantallaRecords(Escena):
             Fecha = self.records[num]["Fecha"]
             datos = [Nombre, Puntuacion, Nivel, Fecha]
             for data in datos:
-                texto = self.tipo_letra.render(str(data), True, COLORRECORDS)
+                texto = self.tipo_letra.render(str(data), True, COLORFUENTE)
                 self.pantalla.blit(texto, (pos_x, pos_y))
                 pos_x += 200
             pos_y += 60

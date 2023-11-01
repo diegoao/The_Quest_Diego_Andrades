@@ -24,6 +24,7 @@ class TheQuest:
         self.tiemponivel = TIEMPO1ERNIVEL
         self.dificultadobjetos = VELOCIDADINICIALOBJETOS
         self.gotowindows = 'PantallaInicio'
+        pg.display.set_caption('The Quest-Diego Andrades Oñate')
 
     def jugar(self):
         terminarJuego = False
