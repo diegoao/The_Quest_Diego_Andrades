@@ -26,6 +26,8 @@ class Escena:
 class PantallaInicio(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
+        self.nextwindows = ''
+
         # Cargo la imagen de la pantalla principal
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'ImagenPortada.png')
@@ -40,13 +42,14 @@ class PantallaInicio(Escena):
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    return True, False
+                    return True
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
+                    self.nextwindows = 'EmpezarPartida'
                     salir = True
             self.pantalla.blit(self.fondo, (0, 0))
             self.pintar_mensaje()
             pg.display.flip()  # Mostramos los cambios
-        return False, True
+        return False, self.nextwindows
 
     def pintar_mensaje(self):
         mensaje = "Pulsa <ESPACIO> para empezar la partida"
@@ -116,7 +119,6 @@ class PantallaPartida(Escena):
             self.Temporizador()
             self.mostrarnivel()
             self.pantalla.blit(self.planeta.image, self.planeta.rect)
-
             # Creo,  actualizo la posición del Asteroide y cuento puntos
             if (creacion-1) == self.temporizador.valor:
                 creacion = self.temporizador.valor
@@ -231,6 +233,7 @@ class PantallaRecords(Escena):
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
+        print('Has entrado en pantalla Records')
         salir = False
         self.mensajes = Mensajes()
         pedirinciales = False
@@ -331,7 +334,7 @@ class PantallaRecords(Escena):
                 texto = self.tipo_letra.render(str(data), True, COLORFUENTE)
                 self.pantalla.blit(texto, (pos_x, pos_y))
                 pos_x += 200
-            pos_y += 100
+            pos_y += 60
 
     def connectandcreatetable(self):
         self.basedatos.conectar()

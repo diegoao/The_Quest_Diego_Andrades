@@ -14,10 +14,12 @@ GROSORMARGENES = 5
 
 # configuración niveles
 
-NUMERONIVELES = 1
-TIEMPO1ERNIVEL = 5
+NUMERONIVELES = 2
+TIEMPO1ERNIVEL = 15
 TIEMPOSIGUIENTENIVEL = 1.5
+# Velocidad incial objetos
 VELOCIDADINICIALOBJETOS = [10, 15]
+# Puntos que te da la nave  en el marcador entre estos dos valores al aterrizar
 PUNTOSATERRIZAJE = [20, 100]
 
 # Puntos Naves
