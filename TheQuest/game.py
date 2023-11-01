@@ -57,6 +57,7 @@ class TheQuest:
             if self.records and not terminarJuego:
                 terminarJuego, self.gotowindows = PantallaRecords(
                     self.pantalla, self.marcador, self.nivel, self.basedatos).ejecutar_bucle()
+                self.resetpartida()
 
         # Cerramos pygame
         pg.quit()
@@ -74,6 +75,13 @@ class TheQuest:
             self.pantallainicial = False
             self.records = True
             self.empezarpartida = False
+
+    def resetpartida(self):
+        self.marcador.reset()
+        self.contadorvidas.reset(VIDASINICIALES)
+        self.nivel = 1
+        self.tiemponivel = TIEMPO1ERNIVEL
+        self.dificultadobjetos = VELOCIDADINICIALOBJETOS
 
 
 if __name__ == '__main__':
