@@ -55,7 +55,7 @@ class TheQuest:
                     self.nivel += 1
 
             if self.records and not terminarJuego:
-                terminarJuego = PantallaRecords(
+                terminarJuego, self.gotowindows = PantallaRecords(
                     self.pantalla, self.marcador, self.nivel, self.basedatos).ejecutar_bucle()
 
         # Cerramos pygame

@@ -1,6 +1,7 @@
 # estándar
 import os
 from random import randint
+import math
 
 # librerías de terceros
 import pygame as pg
@@ -112,6 +113,9 @@ class Marcador:
         pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
         pantalla.blit(texto, (pos_x, pos_y))
 
+    def reset(self):
+        self.valor = 0
+
 
 class ContadorVidas:
 
@@ -140,6 +144,9 @@ class ContadorVidas:
         for i in range(vidas):
             pantalla.blit(self.logo, (pos_x + anchotext+margen, pos_y))
             margen = margen + anchoimagen
+
+    def reset(self, vidas_inciales):
+        self.vidas = vidas_inciales
 
 
 class Asteroide(pg.sprite.Sprite):
@@ -239,3 +246,19 @@ class Mensajes:
             pos_y = (ALTO-self.alto)/2
             pantalla.blit(texto, (pos_x, pos_y + offset))
             offset = self.alto
+
+
+class Timerchangewindows:
+    def __init__(self, timer):
+        self.timerinic = timer
+        self.timeiniciowindows = round(pg.time.get_ticks() / 1000, 0)
+        self.timer = self.timerinic
+
+    def counter(self):
+        self.timersecond = round(pg.time.get_ticks() / 1000, 0)
+        temporizador = (math.trunc(self.timersecond-self.timeiniciowindows))
+        if self.timer > 0:
+            self.timer = self.timerinic
+            self.timer -= temporizador
+        else:
+            return True

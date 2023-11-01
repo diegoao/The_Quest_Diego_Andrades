@@ -9,6 +9,7 @@ from .entidades import (
     Mensajes,
     NaveEspacial,
     Planeta,
+    Timerchangewindows,
     TemporizadorNivel
 )
 
@@ -27,11 +28,11 @@ class PantallaInicio(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
         self.nextwindows = ''
-
+        self.timernextwindows = Timerchangewindows(5)
         # Cargo la imagen de la pantalla principal
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'ImagenPortada.png')
-        self.fondo = pg.image.load(ruta)
+        self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
         self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, 30)
         print("Has entrado en pantalla de incio del juego")
         self.inciarpartida = False
@@ -42,13 +43,20 @@ class PantallaInicio(Escena):
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    return True
+                    self.nextwindows = ''
+                    return True, self.nextwindows
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
                     self.nextwindows = 'EmpezarPartida'
                     salir = True
+
             self.pantalla.blit(self.fondo, (0, 0))
             self.pintar_mensaje()
             pg.display.flip()  # Mostramos los cambios
+            # Cambio a pantalla records en 5 segundos
+            if self.timernextwindows.counter():
+                self.nextwindows = 'Records'
+                salir = True
+
         return False, self.nextwindows
 
     def pintar_mensaje(self):
@@ -230,6 +238,7 @@ class PantallaRecords(Escena):
         self.nivel = nivel
         self.basedatos = datos
         self.marcador = marcador
+        self.nextwindows = ''
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
@@ -251,17 +260,21 @@ class PantallaRecords(Escena):
         mensaje = [f'Has conseguido un record, introducir 3 inciales',
                    'Pulsa <<ESPACIO>> para continuar']
         tamañofuente = 30
+        # Consulto a la base de datos para ver si los puntos del jugador están entre los 5 primeros
         sql = f'SELECT Puntos from records where Puntos > {self.marcador.valor}'
         records = self.basedatos.consultaSQL(sql)
         # Si el número de records mayores que el marcador es menor que numero máximo de records lo guardamos
-        if len(records) < NUMERORECORS:
+        if len(records) < NUMERORECORS and self.marcador.valor != 0:
             pedirinciales = True
         else:
             self.records, self.encabezado = self.pedirrecords()
+            self.timernextwindows = Timerchangewindows(5)
         while not salir:
+
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
-                    salir = True
+                    self.nextwindows = ''
+                    return True, self.nextwindows
                 if evento.type == pg.KEYDOWN and not evento.key == pg.K_SPACE and pedirinciales:
                     if evento.key == pg.K_BACKSPACE:
                         self.iniciales = self.iniciales[:-1]
@@ -274,6 +287,7 @@ class PantallaRecords(Escena):
                     self.basedatos.nuevo(sql, parametros)
                     self.records, self.encabezado = self.pedirrecords()
                     self.eliminarrecords()
+                    self.timernextwindows = Timerchangewindows(5)
                     pedirinciales = False
 
             self.pantalla.blit(self.fondo, (0, 0))
@@ -282,8 +296,13 @@ class PantallaRecords(Escena):
                 self.pediriniciales()
             else:
                 self.mostrarrecords()
+                # Cambio a pantalla Inicial en 5 segundos
+                if self.timernextwindows.counter():
+                    self.nextwindows = 'PantallaInicio'
+                    salir = True
             pg.display.flip()  # Mostramos los cambios
-        return True
+
+        return False, self.nextwindows
 
     def pediriniciales(self):
 
