@@ -36,18 +36,22 @@ class PantallaInicio(Escena):
         self.inciarpartida = False
         pg.mixer.music.load('Recursos/Sonidos/Niveles/MusicaPortada.wav')
         self.jugador = NaveEspacial()
-        ancho_rectangulo = 500
+        self.asteroides = pg.sprite.Group()
+        ancho_rectangulo = 450
         alto_rectangulo = 50
         self.rect_instrucciones = pg.Rect(((ANCHO-ancho_rectangulo)/2),
                                           ((ALTO-(alto_rectangulo*1.5))), ancho_rectangulo, alto_rectangulo)
         self.colision = False
         self.mododemo = True
+        self.partida = False
+        self.aterrizar = False
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
         self.mododemo = True
-        # pg.mixer.music.play(-1)
+        self.timercreoasteroides = self.timernextwindows.timer
+        pg.mixer.music.play(-1)
         while not salir:
             self.reloj.tick(FPS)
             for evento in pg.event.get():
@@ -57,10 +61,11 @@ class PantallaInicio(Escena):
                 if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
                     self.nextwindows = 'EmpezarPartida'
                     salir = True
-
             self.pantalla.blit(self.fondo, (0, 0))
-            self.jugador.update(self.colision, False, False, self.mododemo)
+            self.jugador.update(self.colision, self.partida,
+                                self.aterrizar, self.mododemo)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
+            self.asteroidesdemo()
             self.pintar_mensaje()
             self.titulo()
             self.botonintrucciones()
@@ -69,11 +74,11 @@ class PantallaInicio(Escena):
             if self.rect_instrucciones.collidepoint((x_raton, y_raton)):
                 print('raton en posicion')
             else:
-                print('')
                 # Cambio a pantalla records en 5 segundos
                 if self.timernextwindows.counter():
                     self.nextwindows = 'Records'
                     salir = True
+
         pg.mixer.music.stop()
         return False, self.nextwindows
 
@@ -105,6 +110,28 @@ class PantallaInicio(Escena):
             mensaje, True, color)
         self.pantalla.blit(
             text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/2), self.rect_instrucciones.centery-(text_surface.get_height()/2)))
+
+    def asteroidesdemo(self):
+        crearasteroride = False
+        self.asteroides.draw(self.pantalla)
+        if (self.timercreoasteroides-1) == self.timernextwindows.timer:
+            self.timercreoasteroides = self.timernextwindows.timer
+            crearasteroride = True
+        grupoAsteroides = pg.sprite.Group.sprites(self.asteroides)
+        for asteroide in grupoAsteroides:
+            asteroide.update()
+        if crearasteroride:
+            velocidadobjetos = [10, 20]
+            tipoAsteroides = [Asteroide.CAZA,
+                              Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
+            tipo = random.randint(0, 2)
+            velocidad = random.randint(
+                velocidadobjetos[0], velocidadobjetos[1])
+            asteroide = Asteroide(
+                PUNTOSNAVE[tipo], tipoAsteroides[tipo], velocidad)
+            asteroide.rect.x = ANCHO + asteroide.rect.height
+            asteroide.rect.y = random.randint(ALTO/4, ALTO-(ALTO/2.5))
+            self.asteroides.add(asteroide)
 
 #####################################
 

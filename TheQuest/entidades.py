@@ -2,11 +2,12 @@
 import os
 import math
 
+
 # librerías de terceros
 import pygame as pg
 
 # mis importaciones
-from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
+from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, PUNTOSNAVE, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 
 
 class NaveEspacial(pg.sprite.Sprite):
