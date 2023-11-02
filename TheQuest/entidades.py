@@ -1,6 +1,5 @@
 # estándar
 import os
-from random import randint
 import math
 
 # librerías de terceros
@@ -33,8 +32,10 @@ class NaveEspacial(pg.sprite.Sprite):
         self.angulogiro = 0
         self.sonidoexplosion = pg.mixer.Sound(
             'Recursos/Sonidos/Niveles/Explosion.wav')
+        self.subir = True
+        self.bajar = False
 
-    def update(self, colision, partida, aterrizar=None):
+    def update(self, colision=False, partida=False, aterrizar=None, mododemo=False):
         self.partidainiciada = partida
         self.choque = colision
         alturaNave = self.image.get_height()
@@ -43,7 +44,10 @@ class NaveEspacial(pg.sprite.Sprite):
         self.image = self.imagenes[self.contador]
         self.originimage = self.imagenes[self.contador]
         pulsadas = pg.key.get_pressed()
-        self.gestionTeclas(alturaNave, pulsadas)
+        if mododemo:
+            self.mododemo()
+        else:
+            self.gestionTeclas(alturaNave, pulsadas)
         self.aterrizar(aterrizar)
         if self.angulogiro == 180:
             self.image = pg.transform.rotate(
@@ -92,6 +96,17 @@ class NaveEspacial(pg.sprite.Sprite):
 
     def reset(self):
         self.rect = self.image.get_rect(midbottom=(self.anchuraNave/2, ALTO/2))
+
+    def mododemo(self):
+        velocidaddemo = 8
+        if self.rect.y > ALTO-(ALTO/2.5) or self.bajar:
+            self.subir = False
+            self.bajar = True
+            self.rect.y -= velocidaddemo
+        if self.rect.y < ALTO/4 or self.subir:
+            self.bajar = False
+            self.subir = True
+            self.rect.y += velocidaddemo
 
 
 class Marcador:

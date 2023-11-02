@@ -28,23 +28,28 @@ class PantallaInicio(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
         self.nextwindows = ''
-        self.timernextwindows = Timerchangewindows(5)
+        self.timernextwindows = Timerchangewindows(10)
         # Cargo la imagen de la pantalla principal
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'ImagenPortada.png')
         self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
         self.inciarpartida = False
         pg.mixer.music.load('Recursos/Sonidos/Niveles/MusicaPortada.wav')
+        self.jugador = NaveEspacial()
         ancho_rectangulo = 500
         alto_rectangulo = 50
         self.rect_instrucciones = pg.Rect(((ANCHO-ancho_rectangulo)/2),
                                           ((ALTO-(alto_rectangulo*1.5))), ancho_rectangulo, alto_rectangulo)
+        self.colision = False
+        self.mododemo = True
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
+        self.mododemo = True
         # pg.mixer.music.play(-1)
         while not salir:
+            self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     self.nextwindows = ''
@@ -54,6 +59,8 @@ class PantallaInicio(Escena):
                     salir = True
 
             self.pantalla.blit(self.fondo, (0, 0))
+            self.jugador.update(self.colision, False, False, self.mododemo)
+            self.pantalla.blit(self.jugador.image, self.jugador.rect)
             self.pintar_mensaje()
             self.titulo()
             self.botonintrucciones()
@@ -149,8 +156,8 @@ class PantallaPartida(Escena):
             self.moverfondo()
             # self.pantalla.blit(self.fondo, (0, 0))
             self.jugador.update(self.colision, self.partida, self.aterrizar)
-            self.marcador.pintar(self.pantalla)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
+            self.marcador.pintar(self.pantalla)
             self.margenes()
             vidas = self.contador_vidas.vidas
             self.asteroides.draw(self.pantalla)
