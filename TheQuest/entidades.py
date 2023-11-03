@@ -7,7 +7,7 @@ import math
 import pygame as pg
 
 # mis importaciones
-from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, PUNTOSNAVE, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
+from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 
 
 class NaveEspacial(pg.sprite.Sprite):
@@ -99,7 +99,7 @@ class NaveEspacial(pg.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(self.anchuraNave/2, ALTO/2))
 
     def mododemo(self):
-        velocidaddemo = 8
+        velocidaddemo = 7
         if self.rect.y > ALTO-(ALTO/2.5) or self.bajar:
             self.subir = False
             self.bajar = True
@@ -269,12 +269,18 @@ class Timerchangewindows:
         self.timerinic = timer
         self.timeiniciowindows = round(pg.time.get_ticks() / 1000, 0)
         self.timer = self.timerinic
+        self.temporizador = 0
 
     def counter(self):
         self.timersecond = round(pg.time.get_ticks() / 1000, 0)
-        temporizador = (math.trunc(self.timersecond-self.timeiniciowindows))
+        self.temporizador = (math.trunc(
+            self.timersecond-self.timeiniciowindows))
         if self.timer > 0:
             self.timer = self.timerinic
-            self.timer -= temporizador
+            self.timer -= self.temporizador
         else:
             return True
+
+    def reset(self):
+        self.timer = self.timerinic
+        self.timeiniciowindows = round(pg.time.get_ticks() / 1000, 0)

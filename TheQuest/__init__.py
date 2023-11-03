@@ -15,8 +15,8 @@ GROSORMARGENES = 5
 
 # configuración niveles
 
-NUMERONIVELES = 1
-TIEMPO1ERNIVEL = 15
+NUMERONIVELES = 2
+TIEMPO1ERNIVEL = 10
 TIEMPOSIGUIENTENIVEL = 1.5
 # Velocidad incial objetos
 VELOCIDADINICIALOBJETOS = [10, 15]
@@ -29,3 +29,9 @@ PUNTOSNAVE = [9, 22, 16]
 # Ruta base de datos
 RUTABASEDEDATOS = os.path.join('TheQuest', 'Data', 'Records.db')
 NUMERORECORS = 5
+
+
+GAMEHISTORY = ['La búsqueda comienza en un planeta tierra',
+               'moribundo por el cambio climático.',
+               'Partiremos a la búsqueda de un planeta',
+               'compatible con la vida humana para colonizarlo.']

@@ -3,7 +3,7 @@ import os
 import random
 import datetime
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, COLORRECORDS, FPS, GROSORMARGENES, NUMERONIVELES, NUMERORECORS, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
+from . import ALTO, ANCHO, COLORFUENTE, COLORRECORDS, FPS, GAMEHISTORY, GROSORMARGENES, NUMERONIVELES, NUMERORECORS, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
 from .entidades import (
     Asteroide,
     Mensajes,
@@ -45,12 +45,19 @@ class PantallaInicio(Escena):
         self.mododemo = True
         self.partida = False
         self.aterrizar = False
+        self.timerinicio = math.trunc(
+            round(pg.time.get_ticks() / 1000, 0))
+        self.timerpantalla = 0
+
+        self.transparencia = 0
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
         self.mododemo = True
-        self.timercreoasteroides = self.timernextwindows.timer
+        self.aumentartransparencia = False
+        self.disminuirtransparencia = False
+
         pg.mixer.music.play(-1)
         while not salir:
             self.reloj.tick(FPS)
@@ -68,13 +75,14 @@ class PantallaInicio(Escena):
             self.asteroidesdemo()
             self.pintar_mensaje()
             self.titulo()
+            self.mostrarhistoria()
             self.botonintrucciones()
             pg.display.flip()  # Mostramos los cambios
             x_raton, y_raton = pg.mouse.get_pos()
             if self.rect_instrucciones.collidepoint((x_raton, y_raton)):
-                print('raton en posicion')
+                self.timernextwindows.reset()
             else:
-                # Cambio a pantalla records en 5 segundos
+                # Cambio a pantalla records en x segundos
                 if self.timernextwindows.counter():
                     self.nextwindows = 'Records'
                     salir = True
@@ -112,10 +120,13 @@ class PantallaInicio(Escena):
             text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/2), self.rect_instrucciones.centery-(text_surface.get_height()/2)))
 
     def asteroidesdemo(self):
+        self.timerpantalla = math.trunc(
+            round(pg.time.get_ticks() / 1000, 0))
         crearasteroride = False
         self.asteroides.draw(self.pantalla)
-        if (self.timercreoasteroides-1) == self.timernextwindows.timer:
-            self.timercreoasteroides = self.timernextwindows.timer
+        if (self.timerinicio+1) == self.timerpantalla:
+            self.timerinicio = self.timerpantalla
+            self.textoprogresivo = True
             crearasteroride = True
         grupoAsteroides = pg.sprite.Group.sprites(self.asteroides)
         for asteroide in grupoAsteroides:
@@ -132,6 +143,33 @@ class PantallaInicio(Escena):
             asteroide.rect.x = ANCHO + asteroide.rect.height
             asteroide.rect.y = random.randint(ALTO/4, ALTO-(ALTO/2.5))
             self.asteroides.add(asteroide)
+
+    def mostrarhistoria(self):
+        tamañofuente = 30
+        self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
+        altotexto = self.tipo.get_height()
+        mensaje = GAMEHISTORY
+        pos_y = (ALTO - (len(mensaje)*altotexto)*2)/2
+        for cadena in mensaje:
+            texto = self.tipo.render(cadena, True, color=('white'))
+            texto.set_alpha(self.transparencia)
+            pos_x = (ANCHO-texto.get_width())/2
+            self.pantalla.blit(texto, (pos_x, pos_y))
+            pos_y += texto.get_height()*2
+
+        if self.transparencia <= 0:
+            self.disminuirtransparencia = False
+            self.aumentartransparencia = True
+
+        if self.transparencia >= 200:
+            self.aumentartransparencia = False
+            self.disminuirtransparencia = True
+
+        if self.disminuirtransparencia:
+            self.transparencia -= 3
+        if self.aumentartransparencia:
+            self.transparencia += 3
+
 
 #####################################
 
