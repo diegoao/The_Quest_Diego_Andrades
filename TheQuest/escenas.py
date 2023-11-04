@@ -401,7 +401,9 @@ class PantallaRecords(Escena):
         self.encabezado = []
         self.records = []
         self.connectandcreatetable()
-        fechaActual = datetime.datetime.now().date()
+        fechaActual = str(datetime.datetime.now().date())
+        partes = fechaActual.split("-")
+        fechaActual = "-".join(reversed(partes))
         self.iniciales = ''
         mensaje = [f'Has conseguido un record, introducir 3 inciales',
                    'Pulsa <<ESPACIO>> para continuar']
