@@ -35,3 +35,14 @@ GAMEHISTORY = ['La búsqueda comienza en un planeta tierra',
                'moribundo por el cambio climático.',
                'Partiremos a la búsqueda de un planeta',
                'compatible con la vida humana para colonizarlo.']
+
+INSTRUCCIONES = ['1-Utilice la tecla espacio para moverte/confirmar entre',
+                 'menús.',
+                 '2-Usando la flecha arriba y abajo del teclado podrás',
+                 'mover la nave.',
+                 '3-El jugador dispone de 3 vidas para completar el juego.',
+                 '4-Evita colisionar con naves y asteroides, estos sumarán',
+                 'puntos.',
+                 '5-Cuando finalices un nivel, la nave aterrizará y te dará',
+                 'puntos extra.',
+                 '6-La dificultad y el tiempo irá incrementando en cada nivel.']

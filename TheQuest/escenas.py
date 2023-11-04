@@ -3,7 +3,7 @@ import os
 import random
 import datetime
 import pygame as pg
-from . import ALTO, ANCHO, COLORFUENTE, COLORRECORDS, FPS, GAMEHISTORY, GROSORMARGENES, NUMERONIVELES, NUMERORECORS, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
+from . import ALTO, ANCHO, COLORFUENTE, COLORRECORDS, FPS, GAMEHISTORY, GROSORMARGENES, INSTRUCCIONES, NUMERONIVELES, NUMERORECORS, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
 from .entidades import (
     Asteroide,
     Mensajes,
@@ -37,10 +37,6 @@ class PantallaInicio(Escena):
         pg.mixer.music.load('Recursos/Sonidos/Niveles/MusicaPortada.wav')
         self.jugador = NaveEspacial()
         self.asteroides = pg.sprite.Group()
-        ancho_rectangulo = 450
-        alto_rectangulo = 50
-        self.rect_instrucciones = pg.Rect(((ANCHO-ancho_rectangulo)/2),
-                                          ((ALTO-(alto_rectangulo*1.5))), ancho_rectangulo, alto_rectangulo)
         self.colision = False
         self.mododemo = True
         self.partida = False
@@ -48,7 +44,6 @@ class PantallaInicio(Escena):
         self.timerinicio = math.trunc(
             round(pg.time.get_ticks() / 1000, 0))
         self.timerpantalla = 0
-
         self.transparencia = 0
 
     def ejecutar_bucle(self):
@@ -57,7 +52,15 @@ class PantallaInicio(Escena):
         self.mododemo = True
         self.aumentartransparencia = False
         self.disminuirtransparencia = False
-
+        porcentajepantallaprincipal = 0.75
+        width_rect_botoninstrucciones = 450
+        height_rect_botoninstrucciones = 50
+        self.rect_botoninstrucciones = pg.Rect(((ANCHO-width_rect_botoninstrucciones)/2),
+                                               ((ALTO-(height_rect_botoninstrucciones*1.5))), width_rect_botoninstrucciones, height_rect_botoninstrucciones)
+        width_rect_instrucciones = ANCHO * porcentajepantallaprincipal
+        height_rect_instrucciones = ALTO * porcentajepantallaprincipal
+        self.rect_instrucciones = pg.Rect(((ANCHO-width_rect_instrucciones)/2),
+                                          ((ALTO-height_rect_instrucciones)/2), width_rect_instrucciones, height_rect_instrucciones)
         pg.mixer.music.play(-1)
         while not salir:
             self.reloj.tick(FPS)
@@ -73,20 +76,22 @@ class PantallaInicio(Escena):
                                 self.aterrizar, self.mododemo)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
             self.asteroidesdemo()
-            self.pintar_mensaje()
-            self.titulo()
-            self.mostrarhistoria()
             self.botonintrucciones()
-            pg.display.flip()  # Mostramos los cambios
+
             x_raton, y_raton = pg.mouse.get_pos()
-            if self.rect_instrucciones.collidepoint((x_raton, y_raton)):
+            if self.rect_botoninstrucciones.collidepoint((x_raton, y_raton)):
                 self.timernextwindows.reset()
+                self.instrucciones()
+
             else:
                 # Cambio a pantalla records en x segundos
                 if self.timernextwindows.counter():
                     self.nextwindows = 'Records'
                     salir = True
-
+                self.pintar_mensaje()
+                self.titulo()
+                self.mostrarhistoria()
+            pg.display.flip()  # Mostramos los cambios
         pg.mixer.music.stop()
         return False, self.nextwindows
 
@@ -109,15 +114,17 @@ class PantallaInicio(Escena):
         self.pantalla.blit(texto, (pos_x, pos_y))
 
     def botonintrucciones(self):
-        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, 45)
+        grosorborde = 2
+        tamañofuente = 45
+        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
         mensaje = 'INSTRUCCIONES'
         color = pg.Color('white')
         pg.draw.rect(self.pantalla, pg.Color(
-            'red'), self.rect_instrucciones, 2)
+            'red'), self.rect_botoninstrucciones, grosorborde)
         text_surface = fuente.render(
             mensaje, True, color)
         self.pantalla.blit(
-            text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/2), self.rect_instrucciones.centery-(text_surface.get_height()/2)))
+            text_surface, (self.rect_botoninstrucciones.centerx-(text_surface.get_width()/2), self.rect_botoninstrucciones.centery-(text_surface.get_height()/2)))
 
     def asteroidesdemo(self):
         self.timerpantalla = math.trunc(
@@ -166,9 +173,35 @@ class PantallaInicio(Escena):
             self.disminuirtransparencia = True
 
         if self.disminuirtransparencia:
-            self.transparencia -= 3
+            self.transparencia -= 1
         if self.aumentartransparencia:
-            self.transparencia += 3
+            self.transparencia += 1
+
+    def instrucciones(self):
+        grosorborde = 3
+        tamañoencabezado = 45
+        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañoencabezado)
+        mensaje = '¿CÒMO JUGAR?'
+        pg.draw.rect(self.pantalla, pg.Color(
+            'red'), self.rect_instrucciones, grosorborde)
+        text_surface = fuente.render(
+            mensaje, True, color=pg.Color('white'))
+        self.pantalla.blit(
+            text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/2),
+                           self.rect_instrucciones.top))
+        #########
+        tamañoencabezado = 24
+        fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañoencabezado)
+        pg.draw.rect(self.pantalla, pg.Color(
+            'red'), self.rect_instrucciones, grosorborde)
+        pos_y = self.rect_instrucciones.top + text_surface.get_height()
+        for mensaje in INSTRUCCIONES:
+            text_surface = fuente.render(
+                mensaje, True, COLORFUENTE)
+            self.pantalla.blit(
+                text_surface, (self.rect_instrucciones.left + grosorborde,
+                               pos_y))
+            pos_y += text_surface.get_height()*2
 
 
 #####################################
