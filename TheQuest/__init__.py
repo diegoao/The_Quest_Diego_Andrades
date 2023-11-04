@@ -3,6 +3,7 @@ import os
 ANCHO = 1200
 ALTO = 700
 FPS = 25
+# Vidas inciales
 VIDASINICIALES = 3
 
 RUTAFUENTESENCABEZADOS = os.path.join(
@@ -13,13 +14,15 @@ COLORRECORDS = (255, 99, 0)
 TAMAÑOMARGENESPARTIDA = 40
 GROSORMARGENES = 5
 
-# configuración niveles
+# Configuración niveles
 
-NUMERONIVELES = 2
-TIEMPO1ERNIVEL = 10
+NUMERONIVELES = 3
+TIEMPO1ERNIVEL = 15
 TIEMPOSIGUIENTENIVEL = 1.5
+INCREMENTODIFICULTAD = 3
 # Velocidad incial objetos
-VELOCIDADINICIALOBJETOS = [10, 15]
+VELOCIDADINICIALOBJETOS = [13, 15]
+
 # Puntos que te da la nave  en el marcador entre estos dos valores al aterrizar
 PUNTOSATERRIZAJE = [20, 100]
 
@@ -28,6 +31,7 @@ PUNTOSNAVE = [9, 22, 16]
 
 # Ruta base de datos
 RUTABASEDEDATOS = os.path.join('TheQuest', 'Data', 'Records.db')
+# Configuramos el número de records a guardar/mostrar
 NUMERORECORS = 5
 
 

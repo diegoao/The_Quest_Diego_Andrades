@@ -1,12 +1,12 @@
-# estándar
+# Estándar
 import os
 import math
 
 
-# librerías de terceros
+# Librerías de terceros
 import pygame as pg
 
-# mis importaciones
+# Mis importaciones
 from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
 
 

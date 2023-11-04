@@ -1,6 +1,8 @@
 import pygame as pg
-from . import ALTO, ANCHO, NUMERONIVELES, RUTABASEDEDATOS, TIEMPO1ERNIVEL, TIEMPOSIGUIENTENIVEL, VELOCIDADINICIALOBJETOS, VIDASINICIALES
-from TheQuest.escenas import PantallaInicio, PantallaPartida, PantallaRecords
+from . import ALTO, ANCHO, INCREMENTODIFICULTAD, NUMERONIVELES, RUTABASEDEDATOS, TIEMPO1ERNIVEL, TIEMPOSIGUIENTENIVEL, VELOCIDADINICIALOBJETOS, VIDASINICIALES
+from TheQuest.Escenas.PantallaInicial import PantallaInicio
+from TheQuest.Escenas.PantallaJuego import PantallaPartida
+from TheQuest.Escenas.PantallaRecods import Records
 from .entidades import (
     ContadorVidas,
     Marcador,
@@ -46,7 +48,7 @@ class TheQuest:
                     self.tiemponivel = self.tiemponivel * TIEMPOSIGUIENTENIVEL
                     self.tiemponivel = round(self.tiemponivel)
                     self.dificultadobjetos = [
-                        self.dificultadobjetos[0]+2, self.dificultadobjetos[1]+2]
+                        self.dificultadobjetos[0]+INCREMENTODIFICULTAD, self.dificultadobjetos[1]+INCREMENTODIFICULTAD]
 
                 if self.contadorvidas.vidas <= 0 or self.nivel == NUMERONIVELES:
                     self.gotowindows = 'Records'
@@ -54,7 +56,7 @@ class TheQuest:
                     self.nivel += 1
 
             if self.records and not terminarJuego:
-                terminarJuego, self.gotowindows = PantallaRecords(
+                terminarJuego, self.gotowindows = Records(
                     self.pantalla, self.marcador, self.nivel, self.basedatos).ejecutar_bucle()
                 self.resetpartida()
 
