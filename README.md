@@ -32,6 +32,7 @@ Supongamos que queremos crear un entorno virtual con el
 nombre _env_.
 
 ```
+# en Windows
 python -m venv env
 
 # En mac/linux si usáis python 3

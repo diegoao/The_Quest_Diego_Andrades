@@ -139,7 +139,7 @@ class PantallaInicio(Escena):
         mensaje = GAMEHISTORY
         pos_y = (ALTO - (len(mensaje)*altotexto)*DOS)/DOS
         for cadena in mensaje:
-            texto = self.tipo.render(cadena, True, color=('white'))
+            texto = self.tipo.render(cadena, True, COLORBLANCO)
             texto.set_alpha(self.transparencia)
             pos_x = (ANCHO-texto.get_width())/DOS
             self.pantalla.blit(texto, (pos_x, pos_y))
