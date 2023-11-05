@@ -5,7 +5,7 @@ Desarrollo proyecto final.
 
 Gestión de pantallas
 ```
-1.- Cuando empieza el juego aparece en la pantalla principal ejecutando el juego en modo demo. Si no hacemos clic en instrucciones o en la tecla espacio para comenzar la partida irá cambiando entre la pantalla principal y la pantalla de récords cada 8 segundos(configurados con una variable desde .init)
+1.-Cuando empieza el juego aparece en la pantalla principal ejecutando el juego en modo demo. Si no hacemos clic en instrucciones o en la tecla espacio para comenzar la partida irá cambiando entre la pantalla principal y la pantalla de récords cada 8 segundos(configurados con una variable desde .init)
 2.-La ventana instrucciones aparece cuando marcamos con el ratón sobre el botón. Hasta que no desmarquemos el botón instrucciones no podremos iniciar la partida.
 3.-La base de datos se creará con valores predeterminados la primera vez que accedamos la pantalla Récords.
 4.-Si acabamos el juego y hemos conseguido un récord o nos quedamos sin vidas, pero aun así lo hemos conseguido nos mostrará una ventana para introducir nuestras iniciales y memorizar el récord. No dejará seguir si no se meten 3 caracteres.
