@@ -13,14 +13,14 @@ Gestión de pantallas
 en 8 segundos no se inicia volveremos a la pantallaprincipal y deshabilito el acceso a partida desde récords.
 
 ```
+## ¿Cómo funciona el juego?
 
-¿Cómo funciona el juego?
 
 ```
-1.-Si dejamos pulsada la flecha arriba o abajo la velocidad de movimiento incrementa
+1.-Si dejamos pulsada la flecha arriba o abajo, la velocidad de movimiento incrementa
 2.-Hay 3 niveles(Se pueden configurar más desde el init). En cada nivel se aumenta la velocidad del objeto y el nº de objetos que se crean por segundo.
 3.-El tiempo del nivel siguiente se incrementa  con respecto al anterior con un multiplicador configurado en el .init.
-4.-El tiempo se muestra en la pantalla de la partida en forma de cuenta atrás. Si queda
+4.-El tiempo se muestra en la pantalla de la partida en forma de cuenta atrás. Sí queda
 10 segundos el color cambia a ROJO para que el jugador sepa que el nivel está acabando.
 5.-Si un objeto colisiona con la nave no suma puntos y esta explosionará. Cuando la nave aterriza en un planeta suma puntos extras de forma aleatoria.
 
