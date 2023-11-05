@@ -39,7 +39,7 @@ class PantallaPartida(Escena):
         self.tiempodesdeinciojuego = round(pg.time.get_ticks() / 1000, 0)
         creacion = self.tiemponivel
         self.colision = False
-        self.planeta.crearplaneta()
+        self.planeta.crearplaneta(self.nivel)
         self.partida = True
         self.aterrizar = False
         self.xfondo = 0

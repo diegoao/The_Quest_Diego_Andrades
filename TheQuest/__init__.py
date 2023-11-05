@@ -18,8 +18,8 @@ TAMAÑOFUENTEMARCADORES = 25
 # Configuración niveles
 
 NUMERONIVELES = 3
-TIEMPO1ERNIVEL = 15
-TIEMPOSIGUIENTENIVEL = 1.5
+TIEMPO1ERNIVEL = 12
+TIEMPOSIGUIENTENIVEL = 1.3
 INCREMENTODIFICULTAD = 10
 
 # Velocidad incial objetos
@@ -49,7 +49,7 @@ GAMEHISTORY = ['La búsqueda comienza en un planeta tierra',
                'compatible con la vida humana para colonizarlo.']
 
 INSTRUCCIONES = ['1-Utilice la tecla espacio para moverte/confirmar entre',
-                 'menús.',
+                 'menús. Hay 3 niveles',
                  '2-Usando la flecha arriba y abajo del teclado podrás',
                  'mover la nave.',
                  '3-El jugador dispone de 3 vidas para completar el juego.',

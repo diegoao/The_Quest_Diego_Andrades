@@ -229,11 +229,12 @@ class Planeta:
     movimiento = 2
 
     def crearplaneta(self, modalidad=0):
-        self.tipo = modalidad
+        self.tipo = modalidad-1
         self.imagenes = []
-        ruta = os.path.join(
-            'Recursos', 'imágenes', 'Planetas', self.IMG_PLANETAS[self.tipo])
-        self.imagenes.append(pg.image.load(ruta))
+        for i in range(3):
+            ruta_img = os.path.join(
+                'Recursos', 'imágenes', 'Planetas', f'Planeta{i}.png')
+            self.imagenes.append(pg.image.load(ruta_img))
         self.image = self.imagenes[self.tipo]
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO

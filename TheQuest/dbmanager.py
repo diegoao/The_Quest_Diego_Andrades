@@ -102,7 +102,7 @@ class DBManager:
         self.desconectar(conexion)
         return resultado
 
-    def consultaConParametros(self, consulta, params):
+    #def consultaConParametros(self, consulta, params):
         conexion, cursor = self.conectar()
 
         resultado = False
