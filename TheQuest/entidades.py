@@ -7,7 +7,7 @@ import math
 import pygame as pg
 
 # Mis importaciones
-from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, GROSORMARGENES, RUTAFUENTESENCABEZADOS, TAMAÑOMARGENESPARTIDA
+from . import ALTO,  ANCHO, COLORFUENTE, COLORWARNING, DOS, GROSORMARGENES, NUMERONIVELES, RUTAFUENTESENCABEZADOS, TAMAÑOFUENTEMARCADORES, TAMAÑOMARGENESPARTIDA
 
 
 class NaveEspacial(pg.sprite.Sprite):
@@ -28,7 +28,8 @@ class NaveEspacial(pg.sprite.Sprite):
         self.contador = 0
         self.image = self.imagenes[self.contador]
         self.anchuraNave = self.image.get_width()
-        self.rect = self.image.get_rect(midbottom=(self.anchuraNave/2, ALTO/2))
+        self.rect = self.image.get_rect(
+            midbottom=(self.anchuraNave/DOS, ALTO/DOS))
         self.velomovimiento = self.velocidadMin
         self.angulogiro = 0
         self.sonidoexplosion = pg.mixer.Sound(
@@ -65,9 +66,9 @@ class NaveEspacial(pg.sprite.Sprite):
                 self.rect = self.image.get_rect(
                     center=self.rect.center)
             else:
-                if self.rect.y > (ALTO-self.anchuraNave)/2:
+                if self.rect.y > (ALTO-self.anchuraNave)/DOS:
                     self.rect.y -= velocidad
-                if self.rect.y < (ALTO-self.anchuraNave)/2:
+                if self.rect.y < (ALTO-self.anchuraNave)/DOS:
                     self.rect.y += velocidad
                 self.rect.x += velocidad
 
@@ -96,7 +97,8 @@ class NaveEspacial(pg.sprite.Sprite):
                     self.rect.top = ALTO-alturaNave-TAMAÑOMARGENESPARTIDA
 
     def reset(self):
-        self.rect = self.image.get_rect(midbottom=(self.anchuraNave/2, ALTO/2))
+        self.rect = self.image.get_rect(
+            midbottom=(self.anchuraNave/DOS, ALTO/DOS))
 
     def mododemo(self):
         velocidaddemo = 7
@@ -113,7 +115,8 @@ class NaveEspacial(pg.sprite.Sprite):
 class Marcador:
     def __init__(self, puntos=0):
         self.valor = puntos
-        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
+        self.tipo_letra = pg.font.Font(
+            RUTAFUENTESENCABEZADOS, TAMAÑOFUENTEMARCADORES)
 
     def aumentar(self, incremento):
 
@@ -126,7 +129,7 @@ class Marcador:
         texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
         altotexto = texto.get_height()
         pos_x = 20
-        pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
+        pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/DOS
         pantalla.blit(texto, (pos_x, pos_y))
 
     def reset(self):
@@ -137,7 +140,8 @@ class ContadorVidas:
 
     def __init__(self, vidas_iniciales):
         self.vidas = vidas_iniciales
-        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
+        self.tipo_letra = pg.font.Font(
+            RUTAFUENTESENCABEZADOS, TAMAÑOFUENTEMARCADORES)
 
     def perder_vida(self):
         self.vidas -= 1
@@ -150,13 +154,13 @@ class ContadorVidas:
         texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
         anchotext, altotext = texto.get_size()
         pos_x = 20
-        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altotext)/2
+        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altotext)/DOS
         pantalla.blit(texto, (pos_x, pos_y))
         # Configuro imagenes visualizadoras de vida
         ruta = os.path.join('Recursos', 'imágenes', 'Componentes', 'vidas.png')
         self.logo = pg.image.load(ruta)
         anchoimagen, altoimagen = self.logo.get_size()
-        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altoimagen)/2
+        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altoimagen)/DOS
         for i in range(vidas):
             pantalla.blit(self.logo, (pos_x + anchotext+margen, pos_y))
             margen = margen + anchoimagen
@@ -196,7 +200,8 @@ class Asteroide(pg.sprite.Sprite):
 class TemporizadorNivel:
     def __init__(self, tiempo):
         self.valor = 1
-        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
+        self.tipo_letra = pg.font.Font(
+            RUTAFUENTESENCABEZADOS, TAMAÑOFUENTEMARCADORES)
         self.inicialNivel = tiempo
 
     def decrementar(self, temporizador):
@@ -214,7 +219,7 @@ class TemporizadorNivel:
             texto = self.tipo_letra.render(cadena, True, COLORWARNING)
         altotexto = texto.get_height()
         pos_x = 500
-        pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/2
+        pos_y = (TAMAÑOMARGENESPARTIDA-altotexto)/DOS
         pantalla.blit(texto, (pos_x, pos_y))
 
 
@@ -232,7 +237,7 @@ class Planeta:
         self.image = self.imagenes[self.tipo]
         self.rect = self.image.get_rect()
         self.rect.x = ANCHO
-        self.rect.y = (ALTO-self.rect.width)/2
+        self.rect.y = (ALTO-self.rect.width)/DOS
         self.velocidad = self.movimiento
 
     def update(self):
@@ -250,16 +255,20 @@ class Mensajes:
         self.alto = 0
         self.ancho = 0
 
-    def pintar(self, pantalla, mensaje, tamaño=45):
+    def pintar(self, pantalla, mensaje, tamaño=45, nivel=0):
+        if nivel == NUMERONIVELES:
+            color = (127, 255, 212)
+        else:
+            color = COLORFUENTE
         self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, tamaño)
         cadena = mensaje
         offset = 0
         for i in cadena:
-            texto = self.tipo_letra.render(i, True, COLORFUENTE)
+            texto = self.tipo_letra.render(i, True, color)
             self.alto = texto.get_height()
             self.ancho = texto.get_width()
-            pos_x = (ANCHO-self.ancho)/2
-            pos_y = (ALTO-self.alto)/2
+            pos_x = (ANCHO-self.ancho)/DOS
+            pos_y = (ALTO-self.alto)/DOS
             pantalla.blit(texto, (pos_x, pos_y + offset))
             offset = self.alto
 

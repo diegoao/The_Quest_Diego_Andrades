@@ -2,7 +2,7 @@ import math
 import os
 import random
 import pygame as pg
-from TheQuest import ALTO, ANCHO, COLORFUENTE, FPS, GROSORMARGENES, NUMERONIVELES, RUTAFUENTESENCABEZADOS, PUNTOSATERRIZAJE, PUNTOSNAVE, TAMAÑOMARGENESPARTIDA
+from TheQuest import ALTO, ANCHO, COLORFUENTE, DOS, FPS, GROSORMARGENES, NUMERONIVELES, PUNTOSATERRIZAJE, PUNTOSNAVE, RUTAFUENTESENCABEZADOS, TAMAÑOFUENTEMARCADORES, TAMAÑOMARGENESPARTIDA
 from TheQuest.entidades import (
     Asteroide,
     Mensajes,
@@ -36,15 +36,12 @@ class PantallaPartida(Escena):
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
         salir = False
-        self.crear_asteroide()
         self.tiempodesdeinciojuego = round(pg.time.get_ticks() / 1000, 0)
         creacion = self.tiemponivel
         self.colision = False
         self.planeta.crearplaneta()
         self.partida = True
         self.aterrizar = False
-        pg.mixer.music.load('Recursos/Sonidos/Niveles/nivel.wav')
-        pg.mixer.music.play(-1, random.randint(1, 60))
         self.xfondo = 0
         self.yfondo = 0
 
@@ -88,9 +85,7 @@ class PantallaPartida(Escena):
             if self.contador_vidas.vidas <= 0:
                 salir = True
             self.finalizarNivel()
-
             pg.display.flip()  # Mostramos los cambios
-        pg.mixer.music.stop()
         return False
 
     def moverfondo(self):
@@ -130,8 +125,9 @@ class PantallaPartida(Escena):
             else:
                 mensaje = [f'Felicitaciones has completado el juego',
                            'Pulsa <<ESPACIO>> para continuar']
-
-            self.textfinalnivel.pintar(self.pantalla, mensaje)
+            tamañofuente = 45
+            self.textfinalnivel.pintar(
+                self.pantalla, mensaje, tamañofuente, self.nivel)
             self.esperacambionivel = True
 
     def Temporizador(self):
@@ -147,26 +143,29 @@ class PantallaPartida(Escena):
                      (0, ALTO-TAMAÑOMARGENESPARTIDA), (ANCHO, ALTO-TAMAÑOMARGENESPARTIDA), GROSORMARGENES)
 
     def crear_asteroide(self):
-        velocidadobjetos = self.dificultad
+        for nobjetos in range(self.nivel):
+            velocidadobjetos = self.dificultad
 
-        tipoAsteroides = [Asteroide.CAZA,
-                          Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
-        tipo = random.randint(0, 2)
-        velocidad = random.randint(velocidadobjetos[0], velocidadobjetos[1])
-        asteroide = Asteroide(
-            PUNTOSNAVE[tipo], tipoAsteroides[tipo], velocidad)
-        asteroide.rect.x = ANCHO + asteroide.rect.height
-        asteroide.rect.y = random.randint(
-            TAMAÑOMARGENESPARTIDA, ALTO-TAMAÑOMARGENESPARTIDA-asteroide.rect.width)
-        self.asteroides.add(asteroide)
+            tipoAsteroides = [Asteroide.CAZA,
+                              Asteroide.ASTEROIDE1, Asteroide.ASTEROIDE2]
+            tipo = random.randint(0, DOS)
+            velocidad = random.randint(
+                velocidadobjetos[0], velocidadobjetos[1])
+            asteroide = Asteroide(
+                PUNTOSNAVE[tipo], tipoAsteroides[tipo], velocidad)
+            asteroide.rect.x = ANCHO + asteroide.rect.height
+            asteroide.rect.y = random.randint(
+                TAMAÑOMARGENESPARTIDA, ALTO-TAMAÑOMARGENESPARTIDA-asteroide.rect.width)
+            self.asteroides.add(asteroide)
 
     def mostrarnivel(self):
-        self.tipo_letra = pg.font.Font(RUTAFUENTESENCABEZADOS, 25)
+        self.tipo_letra = pg.font.Font(
+            RUTAFUENTESENCABEZADOS, TAMAÑOFUENTEMARCADORES)
         nivel = str(self.nivel)
         cadena = f'Jugando el nivel: {nivel}'
         texto = self.tipo_letra.render(cadena, True, COLORFUENTE)
         altotexto = texto.get_height()
         anchotexto = texto.get_width()
-        pos_x = (ANCHO-anchotexto)/2
-        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altotexto)/2
+        pos_x = (ANCHO-anchotexto)/DOS
+        pos_y = ALTO - (TAMAÑOMARGENESPARTIDA-GROSORMARGENES+altotexto)/DOS
         self.pantalla.blit(texto, (pos_x, pos_y))

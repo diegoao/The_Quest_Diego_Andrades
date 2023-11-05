@@ -13,15 +13,20 @@ COLORWARNING = (220, 30, 0)
 COLORRECORDS = (255, 99, 0)
 TAMAÑOMARGENESPARTIDA = 40
 GROSORMARGENES = 5
+TAMAÑOFUENTEMARCADORES = 25
 
 # Configuración niveles
 
 NUMERONIVELES = 3
 TIEMPO1ERNIVEL = 15
 TIEMPOSIGUIENTENIVEL = 1.5
-INCREMENTODIFICULTAD = 3
+INCREMENTODIFICULTAD = 10
+
 # Velocidad incial objetos
 VELOCIDADINICIALOBJETOS = [13, 15]
+
+# Tiempo entre cambio de pantalla inicial y records
+WINDOWSTIME = 8
 
 # Puntos que te da la nave  en el marcador entre estos dos valores al aterrizar
 PUNTOSATERRIZAJE = [20, 100]
@@ -34,6 +39,9 @@ RUTABASEDEDATOS = os.path.join('TheQuest', 'Data', 'Records.db')
 # Configuramos el número de records a guardar/mostrar
 NUMERORECORS = 5
 
+# Para cuando divido entre 2
+DOS = 2
+POSICION0 = (0, 0)
 
 GAMEHISTORY = ['La búsqueda comienza en un planeta tierra',
                'moribundo por el cambio climático.',

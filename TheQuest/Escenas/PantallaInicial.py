@@ -2,7 +2,7 @@ import math
 import os
 import random
 import pygame as pg
-from TheQuest import ALTO, ANCHO, COLORFUENTE, FPS, GAMEHISTORY, INSTRUCCIONES, RUTAFUENTESENCABEZADOS, PUNTOSNAVE
+from TheQuest import ALTO, ANCHO, COLORFUENTE, DOS, FPS, GAMEHISTORY, INSTRUCCIONES, POSICION0, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, WINDOWSTIME
 from TheQuest.entidades import (
     Asteroide,
     NaveEspacial,
@@ -15,13 +15,12 @@ class PantallaInicio(Escena):
     def __init__(self, pantalla):
         super().__init__(pantalla)
         self.nextwindows = ''
-        self.timernextwindows = Timerchangewindows(10)
+        self.timernextwindows = Timerchangewindows(WINDOWSTIME)
         # Cargo la imagen de la pantalla principal
         ruta = os.path.join('Recursos', 'imágenes',
                             'Fondos', 'ImagenPortada.png')
         self.fondo = pg.transform.scale(pg.image.load(ruta), (ANCHO, ALTO))
         self.inciarpartida = False
-        pg.mixer.music.load('Recursos/Sonidos/Niveles/MusicaPortada.wav')
         self.jugador = NaveEspacial()
         self.asteroides = pg.sprite.Group()
         self.colision = False
@@ -37,28 +36,28 @@ class PantallaInicio(Escena):
         super().ejecutar_bucle()
         salir = False
         self.mododemo = True
+        instrucciones = False
         self.aumentartransparencia = False
         self.disminuirtransparencia = False
         porcentajepantallaprincipal = 0.75
         width_rect_botoninstrucciones = 450
         height_rect_botoninstrucciones = 50
-        self.rect_botoninstrucciones = pg.Rect(((ANCHO-width_rect_botoninstrucciones)/2),
+        self.rect_botoninstrucciones = pg.Rect(((ANCHO-width_rect_botoninstrucciones)/DOS),
                                                ((ALTO-(height_rect_botoninstrucciones*1.5))), width_rect_botoninstrucciones, height_rect_botoninstrucciones)
         width_rect_instrucciones = ANCHO * porcentajepantallaprincipal
         height_rect_instrucciones = ALTO * porcentajepantallaprincipal
-        self.rect_instrucciones = pg.Rect(((ANCHO-width_rect_instrucciones)/2),
-                                          ((ALTO-height_rect_instrucciones)/2), width_rect_instrucciones, height_rect_instrucciones)
-        pg.mixer.music.play(-1)
+        self.rect_instrucciones = pg.Rect(((ANCHO-width_rect_instrucciones)/DOS),
+                                          ((ALTO-height_rect_instrucciones)/DOS), width_rect_instrucciones, height_rect_instrucciones)
         while not salir:
             self.reloj.tick(FPS)
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
                     self.nextwindows = ''
                     return True, self.nextwindows
-                if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE:
+                if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and not instrucciones:
                     self.nextwindows = 'EmpezarPartida'
                     salir = True
-            self.pantalla.blit(self.fondo, (0, 0))
+            self.pantalla.blit(self.fondo, POSICION0)
             self.jugador.update(self.colision, self.partida,
                                 self.aterrizar, self.mododemo)
             self.pantalla.blit(self.jugador.image, self.jugador.rect)
@@ -69,35 +68,28 @@ class PantallaInicio(Escena):
             if self.rect_botoninstrucciones.collidepoint((x_raton, y_raton)):
                 self.timernextwindows.reset()
                 self.instrucciones()
+                instrucciones = True
 
             else:
+                instrucciones = False
                 # Cambio a pantalla records en x segundos
                 if self.timernextwindows.counter():
                     self.nextwindows = 'Records'
                     salir = True
-                self.pintar_mensaje()
+                self.pintar_mensaje(
+                    "Pulsa <ESPACIO> para empezar la partida")
                 self.titulo()
                 self.mostrarhistoria()
             pg.display.flip()  # Mostramos los cambios
-        pg.mixer.music.stop()
         return False, self.nextwindows
-
-    def pintar_mensaje(self):
-        tamañofuente = 30
-        self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
-        mensaje = "Pulsa <ESPACIO> para empezar la partida"
-        texto = self.tipo.render(mensaje, True, COLORFUENTE)
-        pos_x = (ANCHO-texto.get_width())/2
-        pos_y = (ALTO * 3/4) + texto.get_height()
-        self.pantalla.blit(texto, (pos_x, pos_y))
 
     def titulo(self):
         tamañofuente = 120
         self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
         mensaje = "THE QUEST"
         texto = self.tipo.render(mensaje, True, COLORFUENTE)
-        pos_x = (ANCHO-texto.get_width())/2
-        pos_y = texto.get_height()/2
+        pos_x = (ANCHO-texto.get_width())/DOS
+        pos_y = texto.get_height()/DOS
         self.pantalla.blit(texto, (pos_x, pos_y))
 
     def botonintrucciones(self):
@@ -111,7 +103,7 @@ class PantallaInicio(Escena):
         text_surface = fuente.render(
             mensaje, True, color)
         self.pantalla.blit(
-            text_surface, (self.rect_botoninstrucciones.centerx-(text_surface.get_width()/2), self.rect_botoninstrucciones.centery-(text_surface.get_height()/2)))
+            text_surface, (self.rect_botoninstrucciones.centerx-(text_surface.get_width()/DOS), self.rect_botoninstrucciones.centery-(text_surface.get_height()/DOS)))
 
     def asteroidesdemo(self):
         self.timerpantalla = math.trunc(
@@ -143,13 +135,13 @@ class PantallaInicio(Escena):
         self.tipo = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
         altotexto = self.tipo.get_height()
         mensaje = GAMEHISTORY
-        pos_y = (ALTO - (len(mensaje)*altotexto)*2)/2
+        pos_y = (ALTO - (len(mensaje)*altotexto)*DOS)/DOS
         for cadena in mensaje:
             texto = self.tipo.render(cadena, True, color=('white'))
             texto.set_alpha(self.transparencia)
-            pos_x = (ANCHO-texto.get_width())/2
+            pos_x = (ANCHO-texto.get_width())/DOS
             self.pantalla.blit(texto, (pos_x, pos_y))
-            pos_y += texto.get_height()*2
+            pos_y += texto.get_height()*DOS
 
         if self.transparencia <= 0:
             self.disminuirtransparencia = False
@@ -174,7 +166,7 @@ class PantallaInicio(Escena):
         text_surface = fuente.render(
             mensaje, True, color=pg.Color('white'))
         self.pantalla.blit(
-            text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/2),
+            text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/DOS),
                            self.rect_instrucciones.top))
         #########
         tamañoencabezado = 24

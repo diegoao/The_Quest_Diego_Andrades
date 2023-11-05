@@ -1,7 +1,7 @@
 import os
 import datetime
 import pygame as pg
-from TheQuest import ALTO, ANCHO, COLORFUENTE, NUMERORECORS, RUTAFUENTESENCABEZADOS
+from TheQuest import ALTO, ANCHO, COLORFUENTE, DOS, NUMERORECORS, POSICION0, RUTAFUENTESENCABEZADOS, WINDOWSTIME
 from TheQuest.entidades import (
     Mensajes,
     Timerchangewindows
@@ -16,6 +16,7 @@ class Records(Escena):
         self.basedatos = datos
         self.marcador = marcador
         self.nextwindows = ''
+        self.numniniciales = 3
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
@@ -38,8 +39,6 @@ class Records(Escena):
         self.cambio1seg = 0
         self.cambiosentidoimg = 0
         ########################
-        pg.mixer.music.load('Recursos/Sonidos/Niveles/records.wav')
-        pg.mixer.music.play(-1)
         self.encabezado = []
         self.records = []
         self.connectandcreatetable()
@@ -58,7 +57,8 @@ class Records(Escena):
             pedirinciales = True
         else:
             self.records, self.encabezado = self.pedirrecords()
-            self.timernextwindows = Timerchangewindows(6)
+            self.timernextwindows = Timerchangewindows(WINDOWSTIME)
+        # bucle principal
         while not salir:
             for evento in pg.event.get():
                 if evento.type == pg.QUIT:
@@ -69,30 +69,34 @@ class Records(Escena):
                         self.iniciales = self.iniciales[:-1]
                     else:
                         self.iniciales += evento.unicode
-                if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and pedirinciales and len(self.iniciales) == 3:
+                if evento.type == pg.KEYDOWN and evento.key == pg.K_SPACE and pedirinciales and len(self.iniciales) == self.numniniciales:
                     sql = 'INSERT INTO records (Nombre,Puntos, Nivel, Fecha) VALUES (?, ?, ?, ?)'
                     parametros = (self.iniciales, self.marcador.valor,
                                   self.nivel, fechaActual)
                     self.basedatos.nuevo(sql, parametros)
                     self.records, self.encabezado = self.pedirrecords()
                     self.eliminarrecords()
-                    self.timernextwindows = Timerchangewindows(5)
+                    self.timernextwindows = Timerchangewindows(WINDOWSTIME)
                     pedirinciales = False
+                if evento.type == pg.KEYDOWN and evento.key == pg.K_RETURN and not pedirinciales:
+                    self.nextwindows = 'EmpezarPartida'
+                    salir = True
 
             if pedirinciales:
-                self.pantalla.blit(self.fondo, (0, 0))
+                self.pantalla.blit(self.fondo, POSICION0)
                 self.mensajes.pintar(self.pantalla, mensaje, tamañofuente)
                 self.pediriniciales()
             else:
                 self.hiperespacio()
-                self.pantalla.blit(self.image, (0, 0))
+                self.pantalla.blit(self.image, POSICION0)
                 self.mostrarrecords()
                 # Cambio a pantalla Inicial en 5 segundos
                 if self.timernextwindows.counter():
                     self.nextwindows = 'PantallaInicio'
                     salir = True
+                mensaje = 'PULSA <<INTRO>> PARA COMENZAR LA PARTIDA'
+                self.pintar_mensaje(mensaje)
             pg.display.flip()  # Mostramos los cambios
-        pg.mixer.music.stop()
         return False, self.nextwindows
 
     def hiperespacio(self):
@@ -110,19 +114,19 @@ class Records(Escena):
 
     def pediriniciales(self):
         tamañofuente = 45
-        if len(self.iniciales) > 3:
-            self.iniciales = self.iniciales[:3]
+        if len(self.iniciales) > self.numniniciales:
+            self.iniciales = self.iniciales[:self.numniniciales]
         fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
         ancho_rectangulo = 120
         alto_rectangulo = 50
-        input_rect = pg.Rect(((ANCHO-ancho_rectangulo)/2),
+        input_rect = pg.Rect(((ANCHO-ancho_rectangulo)/DOS),
                              ((ALTO-alto_rectangulo)/1.5), ancho_rectangulo, alto_rectangulo)
         color = pg.Color('white')
-        pg.draw.rect(self.pantalla, COLORFUENTE, input_rect, 2)
+        pg.draw.rect(self.pantalla, COLORFUENTE, input_rect, DOS)
         text_surface = fuente.render(
             self.iniciales, True, color)
         self.pantalla.blit(
-            text_surface, (input_rect.centerx-(text_surface.get_width()/2), input_rect.centery-(text_surface.get_height()/2)))
+            text_surface, (input_rect.centerx-(text_surface.get_width()/DOS), input_rect.centery-(text_surface.get_height()/DOS)))
 
     def pedirrecords(self):
         # Pido los enunciado de las columnas y omito el id
