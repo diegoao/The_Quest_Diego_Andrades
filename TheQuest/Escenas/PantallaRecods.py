@@ -1,6 +1,9 @@
+# Estándar
 import os
 import datetime
+# Librerias de terceros
 import pygame as pg
+# Mis importaciones
 from TheQuest import ALTO, ANCHO, COLORFUENTE, DOS, NUMERORECORS, POSICION0, RUTAFUENTESENCABEZADOS, WINDOWSTIME
 from TheQuest.entidades import (
     Mensajes,

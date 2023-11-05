@@ -1,7 +1,10 @@
+# Estándar
 import math
 import os
 import random
+# Librerias de terceros
 import pygame as pg
+# Mis importaciones
 from TheQuest import ALTO, ANCHO, COLORFUENTE, DOS, FPS, GAMEHISTORY, INSTRUCCIONES, POSICION0, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, WINDOWSTIME
 from TheQuest.entidades import (
     Asteroide,

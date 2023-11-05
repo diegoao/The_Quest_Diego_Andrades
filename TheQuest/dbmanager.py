@@ -1,5 +1,6 @@
-import sqlite3
+# Estándar
 from datetime import date
+import sqlite3
 
 
 class DBManager:
