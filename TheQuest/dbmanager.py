@@ -67,42 +67,6 @@ class DBManager:
         conexion.close()
         return resultado
 
-    def obtenerMovimiento(self, id):
-        """
-        SELECT id, fecha, concepto, tipo, cantidad
-          FROM movimientos
-         WHERE tipo=?
-           and fecha=?
-
-         ('G','2023-10-02')
-         ('I','2023-10-05')
-        """
-
-        consulta = 'SELECT id, fecha, concepto, tipo, cantidad FROM movimientos WHERE id=?'
-
-        conexion, cursor = self.conectar()
-
-        cursor.execute(consulta, (id,))
-
-        datos = cursor.fetchone()
-        resultado = None
-        if datos:
-            nombres_columna = []
-            for columna in cursor.description:
-                nombres_columna.append(columna[0])
-
-            movimiento = {}
-            indice = 0
-            for nombre in nombres_columna:
-                movimiento[nombre] = datos[indice]
-                indice += 1
-            movimiento['fecha'] = date.fromisoformat(movimiento['fecha'])
-            resultado = movimiento
-
-        self.desconectar(conexion)
-        return resultado
-
-    #def consultaConParametros(self, consulta, params):
         conexion, cursor = self.conectar()
 
         resultado = False
