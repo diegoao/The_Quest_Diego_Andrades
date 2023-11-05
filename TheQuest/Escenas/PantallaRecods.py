@@ -10,13 +10,14 @@ from TheQuest.Escenas.Escena import Escena
 
 
 class Records(Escena):
-    def __init__(self, pantalla, marcador, nivel, datos):
+    def __init__(self, pantalla, marcador, nivel, datos, juegoiniciado=False):
         super().__init__(pantalla)
         self.nivel = nivel
         self.basedatos = datos
         self.marcador = marcador
         self.nextwindows = ''
         self.numniniciales = 3
+        self.partida = juegoiniciado
 
     def ejecutar_bucle(self):
         super().ejecutar_bucle()
@@ -78,7 +79,7 @@ class Records(Escena):
                     self.eliminarrecords()
                     self.timernextwindows = Timerchangewindows(WINDOWSTIME)
                     pedirinciales = False
-                if evento.type == pg.KEYDOWN and evento.key == pg.K_RETURN and not pedirinciales:
+                if evento.type == pg.KEYDOWN and evento.key == pg.K_RETURN and not pedirinciales and self.partida:
                     self.nextwindows = 'EmpezarPartida'
                     salir = True
 
@@ -94,8 +95,9 @@ class Records(Escena):
                 if self.timernextwindows.counter():
                     self.nextwindows = 'PantallaInicio'
                     salir = True
-                mensaje = 'PULSA <<INTRO>> PARA COMENZAR LA PARTIDA'
-                self.pintar_mensaje(mensaje)
+                if self.partida:
+                    mensaje = 'PULSA <<INTRO>> PARA COMENZAR LA PARTIDA'
+                    self.pintar_mensaje(mensaje)
             pg.display.flip()  # Mostramos los cambios
         return False, self.nextwindows
 

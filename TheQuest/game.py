@@ -51,7 +51,7 @@ class TheQuest:
 
             if self.records and not terminarJuego:
                 terminarJuego, self.gotowindows = Records(
-                    self.pantalla, self.marcador, self.nivel, self.basedatos).ejecutar_bucle()
+                    self.pantalla, self.marcador, self.nivel, self.basedatos, self.ofdeparture).ejecutar_bucle()
                 self.resetpartida()
                 if self.ofdeparture:
                     pg.mixer.music.stop()
