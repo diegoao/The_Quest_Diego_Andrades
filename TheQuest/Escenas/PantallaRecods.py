@@ -4,7 +4,7 @@ import datetime
 # Librerias de terceros
 import pygame as pg
 # Mis importaciones
-from TheQuest import ALTO, ANCHO, COLORFUENTE, DOS, NUMERORECORS, POSICION0, RUTAFUENTESENCABEZADOS, WINDOWSTIME
+from TheQuest import ALTO, ANCHO, COLORBLANCO, COLORFUENTE, DOS, NUMERORECORS, POSICION0, RUTAFUENTESENCABEZADOS, WINDOWSTIME
 from TheQuest.entidades import (
     Mensajes,
     Timerchangewindows
@@ -126,10 +126,9 @@ class Records(Escena):
         alto_rectangulo = 50
         input_rect = pg.Rect(((ANCHO-ancho_rectangulo)/DOS),
                              ((ALTO-alto_rectangulo)/1.5), ancho_rectangulo, alto_rectangulo)
-        color = pg.Color('white')
         pg.draw.rect(self.pantalla, COLORFUENTE, input_rect, DOS)
         text_surface = fuente.render(
-            self.iniciales, True, color)
+            self.iniciales, True, COLORBLANCO)
         self.pantalla.blit(
             text_surface, (input_rect.centerx-(text_surface.get_width()/DOS), input_rect.centery-(text_surface.get_height()/DOS)))
 

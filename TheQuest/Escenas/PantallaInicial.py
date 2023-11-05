@@ -5,7 +5,7 @@ import random
 # Librerias de terceros
 import pygame as pg
 # Mis importaciones
-from TheQuest import ALTO, ANCHO, COLORFUENTE, DOS, FPS, GAMEHISTORY, INSTRUCCIONES, POSICION0, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, WINDOWSTIME
+from TheQuest import ALTO, ANCHO, COLORBLANCO, COLORFUENTE, COLORROJO, DOS, FPS, GAMEHISTORY, INSTRUCCIONES, POSICION0, RUTAFUENTESENCABEZADOS, PUNTOSNAVE, WINDOWSTIME
 from TheQuest.entidades import (
     Asteroide,
     NaveEspacial,
@@ -100,11 +100,10 @@ class PantallaInicio(Escena):
         tamañofuente = 45
         fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañofuente)
         mensaje = 'INSTRUCCIONES'
-        color = pg.Color('white')
-        pg.draw.rect(self.pantalla, pg.Color(
-            'red'), self.rect_botoninstrucciones, grosorborde)
+        pg.draw.rect(self.pantalla, COLORROJO,
+                     self.rect_botoninstrucciones, grosorborde)
         text_surface = fuente.render(
-            mensaje, True, color)
+            mensaje, True, COLORBLANCO)
         self.pantalla.blit(
             text_surface, (self.rect_botoninstrucciones.centerx-(text_surface.get_width()/DOS), self.rect_botoninstrucciones.centery-(text_surface.get_height()/DOS)))
 
@@ -164,18 +163,18 @@ class PantallaInicio(Escena):
         tamañoencabezado = 45
         fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañoencabezado)
         mensaje = '¿CÒMO JUGAR?'
-        pg.draw.rect(self.pantalla, pg.Color(
-            'red'), self.rect_instrucciones, grosorborde)
+        pg.draw.rect(self.pantalla, COLORROJO,
+                     self.rect_instrucciones, grosorborde)
         text_surface = fuente.render(
-            mensaje, True, color=pg.Color('white'))
+            mensaje, True, COLORBLANCO)
         self.pantalla.blit(
             text_surface, (self.rect_instrucciones.centerx-(text_surface.get_width()/DOS),
                            self.rect_instrucciones.top))
         #########
         tamañoencabezado = 24
         fuente = pg.font.Font(RUTAFUENTESENCABEZADOS, tamañoencabezado)
-        pg.draw.rect(self.pantalla, pg.Color(
-            'red'), self.rect_instrucciones, grosorborde)
+        pg.draw.rect(self.pantalla, COLORROJO,
+                     self.rect_instrucciones, grosorborde)
         pos_y = self.rect_instrucciones.top + text_surface.get_height()
         for mensaje in INSTRUCCIONES:
             text_surface = fuente.render(
